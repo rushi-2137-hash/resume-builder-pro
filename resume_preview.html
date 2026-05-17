@@ -156,8 +156,10 @@
         </div>
 
         <div class="resume-container">
-          <div id="resume-a4" class="resume-a4 template-modern-purple">
-            <!-- Dynamic Content Loads Here -->
+          <div id="resume-a4-wrapper" style="width: 794px; transform-origin: top center; margin: 0 auto;">
+            <div id="resume-a4" class="resume-a4 template-modern-purple">
+              <!-- Dynamic Content Loads Here -->
+            </div>
           </div>
         </div>
       </div>
@@ -383,7 +385,7 @@
                 <div style="display: flex; gap: 10px; margin: 4px 0;">
                    ${proj.github ? `<a href="${proj.github}" target="_blank" style="font-size: 10px; color: #666; text-decoration: underline; display: inline-flex; align-items: center; gap: 3px;">GitHub ${externalLinkIcon}</a>` : ''}
                    ${proj.live ? `<a href="${proj.live}" target="_blank" style="font-size: 10px; color: #666; text-decoration: underline;">Live Demo</a>` : ''}
-                </div>
+                 </div>
                 <div class="res-text" style="font-size: 11px; opacity: 0.7;">${proj.desc || ''}</div>
               </div>
             `).join('')}
@@ -464,20 +466,27 @@
     }
 
     function scaleResume() {
-      const container = document.querySelector('.preview-canvas');
+      const container = document.querySelector('.resume-container');
       const resume = document.getElementById('resume-a4');
-      const resumeWrapper = document.querySelector('.resume-container');
+      const resumeWrapper = document.getElementById('resume-a4-wrapper');
       
-      const containerWidth = container.clientWidth - 40;
+      // Calculate based on the actual container available width
+      // Subtracting arbitrary 80px to ensure it looks like a padded A4 page
+      const containerWidth = container.clientWidth - 80; 
       const resumeWidth = 794; 
+      const resumeHeight = 1122;
       
-      if (containerWidth < resumeWidth && containerWidth > 0) {
-        const scale = containerWidth / resumeWidth;
+      let scale = containerWidth / resumeWidth;
+      
+      // Cap the scale on desktop so it doesn't look absurdly huge
+      if (window.innerWidth > 768) {
+        scale = Math.min(scale, 0.85); // 85% looks great visually for A4 size
+      }
+      
+      if (scale > 0) {
         resume.style.transform = `scale(${scale})`;
-        resumeWrapper.style.height = `${1122 * scale}px`; // Strict A4 ratio height
-      } else {
-        resume.style.transform = 'scale(1)';
-        resumeWrapper.style.height = '1122px';
+        resumeWrapper.style.height = `${resumeHeight * scale}px`; 
+        resumeWrapper.style.width = `${resumeWidth * scale}px`;
       }
     }
 
