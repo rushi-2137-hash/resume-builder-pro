@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Builder - Login</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <div class="status-bar">
+      <div class="status-icons"></div>
+    </div>
+
+    <div class="login-container">
+      <div class="hero-section">
+        <div class="illustration-wrapper">
+          <img src="assets/hero.png" alt="Resume Builder" class="hero-img">
+        </div>
+      </div>
+
+      <div class="form-section">
+        <button id="google-login" class="google-btn" onclick="window.location.href='home.html'">
+          <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" class="google-icon" alt="Google">
+          Continue with Google
+        </button>
+
+        <div class="divider-wrapper">
+          <div class="divider-line"></div>
+          <span>OR</span>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="form-inputs">
+          <div class="input-group">
+            <input type="email" id="email" placeholder="Enter your email" class="input-field">
+          </div>
+
+          <div class="input-group">
+            <input type="password" id="password" placeholder="Password" class="input-field">
+            <span class="arrow-icon">&rarr;</span>
+          </div>
+        </div>
+
+        <button id="email-continue" class="primary-btn" onclick="window.location.href='home.html'">Continue</button>
+        <a href="home.html" class="skip-link">Skip for now</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
