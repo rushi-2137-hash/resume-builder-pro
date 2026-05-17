@@ -35,7 +35,41 @@
 
       <!-- Scrollable Content Area -->
       <div class="scrollable-content">
-        <div class="profile-pic-section" style="padding-top: 20px;">
+        <!-- Desktop Steps Sidebar -->
+        <div class="desktop-steps-sidebar">
+          <div class="sidebar-brand">
+            <i data-lucide="zap" style="color: #482E87;"></i>
+            <span>ResumeBuilder</span>
+          </div>
+          <div class="sidebar-step-list">
+            <div class="side-step-item active" onclick="Stepper.goTo(1)">
+              <div class="side-step-icon">1</div>
+              <span>Contact Details</span>
+            </div>
+            <div class="side-step-item" onclick="Stepper.goTo(2)">
+              <div class="side-step-icon">2</div>
+              <span>Social Links</span>
+            </div>
+            <div class="side-step-item" onclick="Stepper.goTo(3)">
+              <div class="side-step-icon">3</div>
+              <span>Education</span>
+            </div>
+            <div class="side-step-item" onclick="Stepper.goTo(4)">
+              <div class="side-step-icon">4</div>
+              <span>Experience</span>
+            </div>
+            <div class="side-step-item" onclick="Stepper.goTo(5)">
+              <div class="side-step-icon">5</div>
+              <span>Skills & Projects</span>
+            </div>
+            <div class="side-step-item" onclick="Stepper.goTo(6)">
+              <div class="side-step-icon">6</div>
+              <span>Summary</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-pic-section">
           <div class="profile-pic-container" id="profile-pic-trigger">
             <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" id="profile-img-preview" alt="Profile">
             <div class="camera-badge">
@@ -311,6 +345,11 @@
           s.classList.toggle('active', i + 1 === Stepper.currentStep);
         });
 
+        // Update Desktop Sidebar items
+        document.querySelectorAll('.side-step-item').forEach((item, i) => {
+          item.classList.toggle('active', i + 1 === Stepper.currentStep);
+        });
+
         // Update Step Indicator
         document.getElementById('step-number').innerText = `Step ${Stepper.currentStep}`;
 
@@ -344,6 +383,12 @@
           Stepper.currentStep--;
           Stepper.updateUI();
         }
+      },
+
+      goTo: (step) => {
+        Stepper.saveCurrentStep();
+        Stepper.currentStep = step;
+        Stepper.updateUI();
       },
 
       saveCurrentStep: () => {
