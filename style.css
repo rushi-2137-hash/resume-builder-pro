@@ -13,7 +13,22 @@ body {
   min-height: 100vh;
   font-family: 'Outfit', sans-serif;
   color: #1a1a1a;
-  background: #f8f9fa; /* Default bg */
+  background: #f8f9fa;
+  overflow-x: hidden;
+}
+
+.desktop-preview-sidebar {
+  display: none;
+}
+
+/* Global Container Fixes */
+.canvas {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f8f9fa;
 }
 
 /* Dashboard Specific Body */
@@ -275,15 +290,23 @@ body {
 }
 
 .device-frame {
-  width: 390px;
-  height: 100vh; /* Or 844px for iPhone 12/13/14 height */
+  width: 100%;
+  max-width: 430px; /* Mobile width by default */
+  height: 100vh;
   background: #ffffff;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  transition: background 0.25s ease, box-shadow 0.25s ease;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 481px) {
+  .device-frame {
+    max-width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
 }
 
 /* Independent Scroll Context */
@@ -311,6 +334,10 @@ body {
   padding-bottom: env(safe-area-inset-bottom); /* iOS support */
   z-index: 1000;
   transition: transform 0.28s ease, opacity 0.28s ease;
+}
+
+.desktop-steps-sidebar {
+  display: none;
 }
 
 .create-flow .device-frame {
@@ -1044,51 +1071,289 @@ body {
   transform: scale(1);
 }
 
-/* Button Disabled State */
-.next-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
+/* --- Desktop Optimization (Breakpoints) --- */
+
+@media (min-width: 481px) {
+  /* Dashboard Grid */
+  .resumes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    padding: 20px 40px 100px;
+  }
+
+  .top-section {
+    padding: 60px 40px 20px;
+  }
+
+  .primary-action-card {
+    margin: 15px 40px 30px;
+    height: 140px;
+  }
+
+  .resumes-row {
+    padding: 10px 40px;
+  }
+
+  /* Navigation: Sidebar for Desktop */
+  .bottom-navigation {
+    width: 280px;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 40px 20px;
+    border-top: none;
+    border-right: 1px solid #f0f0f0;
+    gap: 15px;
+  }
+
+  .nav-item {
+    width: 100%;
+    flex-direction: row;
+    padding: 15px 20px;
+    border-radius: 12px;
+    gap: 15px;
+  }
+
+  .nav-item i {
+    width: 22px;
+    height: 22px;
+  }
+
+  .nav-item span {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .nav-item.active {
+    background: rgba(72, 46, 135, 0.08);
+  }
+
+  .active-line {
+    display: none;
+  }
+
+  .scrollable-content {
+    margin-left: 280px; /* Offset for desktop sidebar */
+    padding-bottom: 40px;
+  }
+
+  /* Resume Info Flow: Optimized Layout */
+  .create-flow .scrollable-content {
+    margin-left: 0; 
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    padding-top: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .desktop-steps-sidebar {
+    width: 280px;
+    background: #fff;
+    border-right: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+    font-weight: 800;
+    font-size: 20px;
+    color: #482E87;
+    padding: 0 10px;
+  }
+
+  .sidebar-step-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .side-step-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #888;
+  }
+
+  .side-step-item:hover {
+    background: #f8f9fa;
+    color: #333;
+  }
+
+  .side-step-item.active {
+    background: rgba(72, 46, 135, 0.08);
+    color: #482E87;
+  }
+
+  .side-step-icon {
+    width: 24px;
+    height: 24px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .side-step-item.active .side-step-icon {
+    background: #482E87;
+    color: #fff;
+  }
+
+  .side-step-item span {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .profile-pic-section {
+    width: 320px;
+    border-right: none;
+    padding-top: 60px;
+    background: #fbfbff;
+  }
+
+  .resume-form {
+    flex: 1;
+    overflow-y: auto;
+    padding: 60px 80px 150px;
+    background: #fff;
+  }
+
+  .step-actions {
+    width: calc(100% - 280px);
+    left: 280px;
+    padding: 24px 60px;
+  }
+
+  .create-flow .step-actions {
+    width: 100%;
+    max-width: 1200px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
+  }
+
+  /* Templates Grid */
+  .templates-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+    gap: 30px !important;
+  }
+
+  /* Preview Side-by-Side */
+  .preview-canvas {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .preview-top-actions {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    z-index: 10;
+  }
+
+  .resume-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 60px 40px;
+    background: #f0f0f0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .desktop-preview-sidebar {
+    width: 320px;
+    background: #fff;
+    border-right: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+
+  .sidebar-header-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #482E87;
+  }
+
+  .theme-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+
+  .theme-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  .theme-circle:hover {
+    transform: scale(1.1);
+  }
+
+  .theme-circle.active {
+    border-color: #482E87;
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(72, 46, 135, 0.3);
+  }
+
+  /* Login Split Screen */
+  .login-container {
+    flex-direction: row !important;
+    max-width: 1200px;
+    width: 90%;
+    height: 650px;
+    background: #fff;
+    border-radius: 30px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .hero-section {
+    width: 60%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .form-section {
+    width: 40%;
+    height: 100%;
+    margin-top: 0;
+    border-radius: 0;
+    padding: 60px 40px;
+    justify-content: center;
+  }
 }
 
-/* Template Filter Styles */
-.category-filters {
-  scrollbar-width: none; 
-}
-.category-filters::-webkit-scrollbar {
-  display: none;
-}
-
-.filter-chip {
-  padding: 8px 18px;
-  background: #f0f0f0;
-  border: none;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #666;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.filter-chip.active {
-  background: #482E87;
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(72, 46, 135, 0.2);
-}
-
-.category-tag {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(4px);
-  color: #fff;
-  padding: 3px 10px;
-  border-radius: 6px;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  z-index: 2;
+@media (min-width: 1200px) {
+  .resumes-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
