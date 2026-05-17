@@ -147,7 +147,15 @@
           </button>
         </div>
 
-        <div class="resume-container" style="width: 100%; display: flex; justify-content: center; overflow: visible;">
+        <!-- Desktop Theme Sidebar -->
+        <div class="desktop-preview-sidebar">
+          <div class="sidebar-header-title">Select Theme</div>
+          <div class="theme-selector-grid" id="desktop-theme-grid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div class="resume-container">
           <div id="resume-a4" class="resume-a4 template-modern-purple">
             <!-- Dynamic Content Loads Here -->
           </div>
@@ -225,11 +233,55 @@
       'stu-entry': { primary: '#795548', layout: 'standard' }
     };
 
+    function switchTheme(themeId) {
+      const config = themeConfigs[themeId] || themeConfigs['modern-purple'];
+      
+      // Update Container Class
+      resumeContainer.className = `resume-a4 theme-${themeId} layout-${config.layout}`;
+      
+      // Update Variables
+      resumeContainer.style.setProperty('--res-primary', config.primary);
+      if (config.sideBg) resumeContainer.style.setProperty('--res-sidebar-bg', config.sideBg);
+      if (config.headerGradient) resumeContainer.style.setProperty('--res-header-grad', config.headerGradient);
+      
+      // Apply Special Flags
+      if (config.noRadius) resumeContainer.classList.add('no-radius');
+      if (config.compact) resumeContainer.classList.add('is-compact');
+      if (config.boldHeaders) resumeContainer.classList.add('bold-headers');
+      if (config.ultraMinimal) resumeContainer.classList.add('ultra-minimal');
+
+      // Update URL without reload
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('template', themeId);
+      window.history.pushState({}, '', newUrl);
+
+      // Re-render
+      renderResume();
+      
+      // Update Sidebar UI
+      document.querySelectorAll('.theme-circle').forEach(c => {
+        c.classList.toggle('active', c.dataset.id === themeId);
+      });
+    }
+
+    function initDesktopSidebar() {
+      const grid = document.getElementById('desktop-theme-grid');
+      if (!grid) return;
+
+      grid.innerHTML = Object.keys(themeConfigs).map(key => `
+        <div class="theme-circle ${key === templateType ? 'active' : ''}" 
+             data-id="${key}" 
+             style="background: ${themeConfigs[key].primary};" 
+             onclick="switchTheme('${key}')"
+             title="${key.replace(/-/g, ' ')}">
+        </div>
+      `).join('');
+    }
+
     const config = themeConfigs[templateType] || themeConfigs['modern-purple'];
     
     // Set Theme Variables
     resumeContainer.style.setProperty('--res-primary', config.primary);
-    if (config.sideBg) resumeContainer.style.setProperty('--res-sidebar-bg', config.sideBg);
     if (config.sideBg) resumeContainer.style.setProperty('--res-sidebar-bg', config.sideBg);
     if (config.headerGradient) resumeContainer.style.setProperty('--res-header-grad', config.headerGradient);
     
@@ -525,7 +577,10 @@
       }
     }
 
-    renderResume();
+    window.onload = () => {
+      initDesktopSidebar();
+      renderResume();
+    };
   </script>
 </body>
 </html>
