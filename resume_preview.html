@@ -32,16 +32,20 @@
       height: 1122px !important;
       background: #fff !important;
       box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      margin: 0 auto;
       color: #333;
-      transform-origin: top center;
+      transform-origin: top left;
       position: relative;
       overflow: hidden;
       box-sizing: border-box;
       flex-shrink: 0;
-      display: block !important; 
+      display: block !important;
       min-height: 1122px !important;
       min-width: 794px !important;
+    }
+
+    .resume-container {
+      overflow: hidden;
+      width: 100%;
     }
 
     /* Global One-Page PDF Fixes */
@@ -156,10 +160,8 @@
         </div>
 
         <div class="resume-container">
-          <div id="resume-a4-wrapper" style="width: 794px; transform-origin: top center; margin: 0 auto;">
-            <div id="resume-a4" class="resume-a4 template-modern-purple">
-              <!-- Dynamic Content Loads Here -->
-            </div>
+          <div id="resume-a4" class="resume-a4 template-modern-purple">
+            <!-- Dynamic Content Loads Here -->
           </div>
         </div>
       </div>
@@ -385,7 +387,7 @@
                 <div style="display: flex; gap: 10px; margin: 4px 0;">
                    ${proj.github ? `<a href="${proj.github}" target="_blank" style="font-size: 10px; color: #666; text-decoration: underline; display: inline-flex; align-items: center; gap: 3px;">GitHub ${externalLinkIcon}</a>` : ''}
                    ${proj.live ? `<a href="${proj.live}" target="_blank" style="font-size: 10px; color: #666; text-decoration: underline;">Live Demo</a>` : ''}
-                 </div>
+                </div>
                 <div class="res-text" style="font-size: 11px; opacity: 0.7;">${proj.desc || ''}</div>
               </div>
             `).join('')}
@@ -466,27 +468,36 @@
     }
 
     function scaleResume() {
-      const container = document.querySelector('.resume-container');
+      const container = document.querySelector('.preview-canvas');
       const resume = document.getElementById('resume-a4');
-      const resumeWrapper = document.getElementById('resume-a4-wrapper');
-      
-      // Calculate based on the actual container available width
-      // Subtracting arbitrary 80px to ensure it looks like a padded A4 page
-      const containerWidth = container.clientWidth - 80; 
-      const resumeWidth = 794; 
-      const resumeHeight = 1122;
-      
-      let scale = containerWidth / resumeWidth;
-      
-      // Cap the scale on desktop so it doesn't look absurdly huge
-      if (window.innerWidth > 768) {
-        scale = Math.min(scale, 0.85); // 85% looks great visually for A4 size
-      }
-      
-      if (scale > 0) {
+      const resumeWrapper = document.querySelector('.resume-container');
+      if (!container || !resume || !resumeWrapper) return;
+
+      const resumeNaturalWidth = 794;
+      const resumeNaturalHeight = 1122;
+      const containerWidth = container.clientWidth;
+
+      if (containerWidth > 0 && containerWidth < resumeNaturalWidth) {
+        // scale = containerWidth / 794 -> scaled visual width = containerWidth exactly
+        // top left + marginLeft 0 = fills container edge-to-edge, no rightward drift
+        const scale = containerWidth / resumeNaturalWidth;
+        const scaledHeight = resumeNaturalHeight * scale;
+        resume.style.transformOrigin = 'top left';
         resume.style.transform = `scale(${scale})`;
-        resumeWrapper.style.height = `${resumeHeight * scale}px`; 
-        resumeWrapper.style.width = `${resumeWidth * scale}px`;
+        resume.style.marginLeft = '0';
+        resume.style.marginRight = '0';
+        resume.style.display = 'block';
+        resumeWrapper.style.height = `${scaledHeight}px`;
+        resumeWrapper.style.overflow = 'hidden';
+      } else {
+        // Desktop: no scaling needed, center normally
+        resume.style.transform = 'scale(1)';
+        resume.style.transformOrigin = 'top left';
+        resume.style.marginLeft = 'auto';
+        resume.style.marginRight = 'auto';
+        resume.style.display = 'block';
+        resumeWrapper.style.height = `${resumeNaturalHeight}px`;
+        resumeWrapper.style.overflow = 'hidden';
       }
     }
 
