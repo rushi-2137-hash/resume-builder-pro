@@ -1090,6 +1090,41 @@ body {
   transform: scale(1);
 }
 
+/* --- Category Filters (Chips) --- */
+.category-filters {
+  display: flex !important;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+  padding: 5px 0;
+}
+
+.filter-chip {
+  background: #f0f0f5;
+  color: #666;
+  border: 1px solid #e0e0e0;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.filter-chip:hover {
+  background: #e8e8ef;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.filter-chip.active {
+  background: #482E87;
+  color: #fff;
+  border-color: #482E87;
+  box-shadow: 0 6px 15px rgba(72, 46, 135, 0.25);
+}
+
 /* --- Desktop Optimization (Breakpoints) --- */
 
 @media (min-width: 481px) {
@@ -1161,7 +1196,7 @@ body {
 
   /* Resume Info Flow: Optimized Layout */
   .create-flow .scrollable-content {
-    margin-left: 0;
+    margin-left: 0; 
     max-width: 1300px;
     margin: 0 auto;
     display: flex;
@@ -1261,11 +1296,15 @@ body {
   }
 
   .create-flow .step-actions {
-    width: 100%;
-    max-width: 1200px;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 20px;
+    width: calc(100% - 280px);
+    max-width: none;
+    left: 280px;
+    transform: none;
+    bottom: 0px;
+    margin: 0;
+    border-radius: 0;
+    padding: 24px 80px;
+    border-left: 1px solid #f0f0f0;
   }
 
   /* Templates Grid */
