@@ -33,8 +33,7 @@ body {
 
 /* Dashboard Specific Body */
 .dashboard-body {
-  background: #ffffff;
-  /* Simplified to white as requested */
+  background: #ffffff; /* Simplified to white as requested */
 }
 
 .top-section {
@@ -73,8 +72,7 @@ body {
 
 /* Primary Action Card */
 .primary-action-card {
-  background: linear-gradient(135deg, #0A214D 0%, #152C5B 100%);
-  /* Navy Gradient */
+  background: linear-gradient(135deg, #0A214D 0%, #152C5B 100%); /* Navy Gradient */
   margin: 15px 22px 25px;
   height: 105px;
   border-radius: 16px;
@@ -85,7 +83,7 @@ body {
   box-shadow: 0 12px 24px rgba(10, 33, 77, 0.15);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .primary-action-card:hover {
@@ -108,13 +106,12 @@ body {
   width: 36px;
   height: 36px;
   background: #ffffff;
-  border-radius: 12px;
-  /* Smoquet/Squircle style */
+  border-radius: 12px; /* Smoquet/Squircle style */
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .plus-circle-inner i {
@@ -144,7 +141,7 @@ body {
   border: 1px solid #eee;
   border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
   margin-bottom: 24px;
 }
 
@@ -258,21 +255,14 @@ body {
 
 /* Reusable Canvas styles from before but improved */
 @media (max-width: 400px) {
-  .dashboard-body {
-    background: white;
-  }
-
-  .canvas {
-    width: 100%;
-    height: 100vh;
-  }
-
-  .device-frame {
-    width: 100%;
-    height: 100%;
-    top: 0;
-    border-radius: 0;
-    box-shadow: none;
+  .dashboard-body { background: white; }
+  .canvas { width: 100%; height: 100vh; }
+  .device-frame { 
+    width: 100%; 
+    height: 100%; 
+    top: 0; 
+    border-radius: 0; 
+    box-shadow: none; 
   }
 }
 
@@ -280,13 +270,32 @@ body {
 .app {
   width: 100%;
   max-width: 390px;
-  height: 100vh;
+  height: 100vh; /* Full viewport height */
   background: white;
   overflow: hidden;
   position: relative;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.12);
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Stack header, content, nav */
+}
+
+/* On desktop, center the login .app as a phone card */
+@media (min-width: 481px) {
+  body:has(.login-container) {
+    background: #eef0f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  body:has(.login-container) .app {
+    max-width: 420px;
+    height: 780px;
+    border-radius: 36px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
 }
 
 /* For pages that use the .canvas / .device-frame structure */
@@ -301,7 +310,7 @@ body {
 
 .device-frame {
   width: 100%;
-  max-width: 430px;
+  max-width: 430px; /* Mobile width by default */
   height: 100vh;
   background: #ffffff;
   display: flex;
@@ -321,10 +330,10 @@ body {
 
 /* Independent Scroll Context */
 .scrollable-content {
-  flex: 1;
+  flex: 1; /* Take up remaining space */
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0 0 80px;
+  padding: 0 0 80px; /* Space for bottom nav to prevent overlap */
   -webkit-overflow-scrolling: touch;
 }
 
@@ -341,7 +350,7 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom); /* iOS support */
   z-index: 1000;
   transition: transform 0.28s ease, opacity 0.28s ease;
 }
@@ -427,7 +436,7 @@ body {
   border-top-right-radius: 32px;
   position: relative;
   z-index: 15;
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
 }
 
 /* Google Button */
@@ -540,10 +549,7 @@ body {
 
 /* Responsiveness */
 @media (max-width: 430px) {
-  body {
-    background: white;
-  }
-
+  body { background: white; }
   .app {
     max-width: 100%;
     height: 100vh;
@@ -565,8 +571,7 @@ body {
   flex-shrink: 0;
 }
 
-.header-left,
-.header-right {
+.header-left, .header-right {
   display: flex;
   align-items: center;
   gap: 15px;
@@ -578,8 +583,7 @@ body {
   color: #333;
 }
 
-.header-left i,
-.header-right i {
+.header-left i, .header-right i {
   width: 20px;
   height: 20px;
   cursor: pointer;
@@ -587,8 +591,7 @@ body {
 }
 
 .premium-icon {
-  color: #FFB800 !important;
-  /* Gold */
+  color: #FFB800 !important; /* Gold */
 }
 
 .preview-btn-icon {
@@ -616,7 +619,7 @@ body {
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid #fff;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .camera-badge {
@@ -672,8 +675,7 @@ body {
   background: #000;
 }
 
-.underlined-input,
-.underlined-textarea {
+.underlined-input, .underlined-textarea {
   width: 100%;
   border: none;
   border-bottom: 1.2px solid #ddd;
@@ -685,8 +687,7 @@ body {
   margin-bottom: 10px;
 }
 
-.underlined-input:focus,
-.underlined-textarea:focus {
+.underlined-input:focus, .underlined-textarea:focus {
   outline: none;
   border-bottom-color: #482E87;
   border-bottom-width: 1.5px;
@@ -748,7 +749,7 @@ body {
   border-radius: 25px;
   font-size: 14px;
   font-weight: 700;
-  box-shadow: 0 4px 12px rgba(10, 33, 77, 0.25);
+  box-shadow: 0 4px 12px rgba(10,33,77,0.25);
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -765,7 +766,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0,0,0,0.9);
   z-index: 2000;
   flex-direction: column;
   justify-content: center;
@@ -804,21 +805,14 @@ body {
   cursor: pointer;
 }
 
-.btn-primary {
-  background: #0A214D;
-  color: #fff;
-}
-
-.btn-secondary {
-  background: #f0f0f0;
-  color: #666;
-}
+.btn-primary { background: #0A214D; color: #fff; }
+.btn-secondary { background: #f0f0f0; color: #666; }
 
 /* Templates Page Styles */
 .templates-scroll-container {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 16px 100px;
+  padding: 20px 16px 100px; /* Extra bottom padding for scroll space */
 }
 
 .templates-grid {
@@ -830,20 +824,24 @@ body {
 .template-card {
   background: #fcfcfc;
   border-radius: 12px;
-  aspect-ratio: 1 / 1.41;
+  aspect-ratio: 1 / 1.41; /* Typical A4 ratio preview */
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   border: 1px solid #eee;
   cursor: pointer;
   transition: transform 0.2s ease;
-  position: relative;
-  height: 220px;
 }
 
 .template-card:active {
   transform: scale(0.97);
+}
+
+/* Template Grid Enhancements */
+.template-card {
+  position: relative;
+  height: 220px;
 }
 
 /* Bottom Nav Active State Utilities */
@@ -866,7 +864,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-bottom: 100px;
+  padding-bottom: 100px; /* Space for bottom nav */
 }
 
 .saved-resume-card {
@@ -876,7 +874,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   transition: transform 0.2s ease;
 }
 
@@ -938,7 +936,6 @@ body {
   font-size: 14px;
   line-height: 1.5;
 }
-
 .step-indicator {
   display: flex;
   gap: 8px;
@@ -955,15 +952,8 @@ body {
 }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 /* Dynamic Item Styling */
@@ -985,7 +975,7 @@ body {
   background: #fff;
   border-radius: 50%;
   padding: 4px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1046,7 +1036,7 @@ body {
   overflow: hidden;
   border: 3px solid transparent;
   background: #f8f9fa;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   position: relative;
   transition: all 0.3s ease;
 }
@@ -1103,7 +1093,6 @@ body {
 /* --- Desktop Optimization (Breakpoints) --- */
 
 @media (min-width: 481px) {
-
   /* Dashboard Grid */
   .resumes-list {
     display: grid;
@@ -1166,7 +1155,7 @@ body {
   }
 
   .scrollable-content {
-    margin-left: 280px;
+    margin-left: 280px; /* Offset for desktop sidebar */
     padding-bottom: 40px;
   }
 
@@ -1341,7 +1330,7 @@ body {
     cursor: pointer;
     border: 3px solid transparent;
     transition: all 0.2s;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   }
 
   .theme-circle:hover {
@@ -1354,31 +1343,25 @@ body {
     box-shadow: 0 6px 15px rgba(72, 46, 135, 0.3);
   }
 
-  /* Login Split Screen */
+  /* Login Page: Keep same mobile design, just centered on desktop */
   .login-container {
-    flex-direction: row !important;
-    max-width: 1200px;
-    width: 90%;
-    height: 650px;
-    background: #fff;
-    border-radius: 30px;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    flex-direction: column;
+    height: 100%;
   }
 
   .hero-section {
-    width: 60%;
-    height: 100%;
+    width: 100%;
+    height: 45%;
     border-radius: 0;
   }
 
   .form-section {
-    width: 40%;
-    height: 100%;
-    margin-top: 0;
-    border-radius: 0;
-    padding: 60px 40px;
-    justify-content: center;
+    width: 100%;
+    flex: 1;
+    margin-top: -20px;
+    border-radius: 32px 32px 0 0;
+    padding: 30px;
+    justify-content: flex-start;
   }
 }
 
