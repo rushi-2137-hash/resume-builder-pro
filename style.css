@@ -32,8 +32,15 @@ body {
 }
 
 /* Dashboard Specific Body */
-.dashboard-body {
-  background: #ffffff; /* Simplified to white as requested */
+.dashboard-body:not(:has(.login-page)) {
+  background: #ffffff;
+}
+
+.dashboard-body:has(.login-page) {
+    display: block;
+    min-height: 100vh;
+    background: #fff;
+    overflow-x: hidden;
 }
 
 .top-section {
@@ -266,36 +273,105 @@ body {
   }
 }
 
-/* Main App Container */
-.app {
-  width: 100%;
-  max-width: 390px;
-  height: 100vh; /* Full viewport height */
-  background: white;
-  overflow: hidden;
-  position: relative;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+/* Login Page Redesign */
+.login-page {
   display: flex;
-  flex-direction: column; /* Stack header, content, nav */
+  min-height: 100vh;
+  width: 100%;
 }
 
-/* On desktop, center the login .app as a phone card */
-@media (min-width: 481px) {
-  body:has(.login-container) {
-    background: #eef0f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
+.login-hero-side {
+  display: none; /* Mobile first */
+}
 
-  body:has(.login-container) .app {
-    max-width: 420px;
-    height: 780px;
-    border-radius: 36px;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);
+.login-form-side {
+  flex: 1;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+}
+
+.form-container-inner {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* On desktop, center the login screen */
+@media (min-width: 992px) {
+  .login-hero-side {
+    display: flex;
+    flex: 1.2;
+    background: linear-gradient(135deg, #0A214D 0%, #482E87 100%);
+    color: white;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px;
+    position: relative;
     overflow: hidden;
   }
+  
+  .hero-decoration {
+      position: absolute;
+      top: -10%;
+      right: -10%;
+      width: 40vw;
+      height: 40vw;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+  }
+
+  .login-hero-content {
+      position: relative;
+      z-index: 10;
+  }
+
+  .login-hero-title {
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    letter-spacing: -1px;
+  }
+
+  .login-hero-subtitle {
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 500px;
+    margin-bottom: 40px;
+  }
+
+  .hero-mockup-img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.3);
+    margin-top: 20px;
+    transform: perspective(1000px) rotateY(-10deg) rotateX(5deg);
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .login-hero-side:hover .hero-mockup-img {
+      transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+  }
+
+  .login-form-side {
+    flex: 1;
+    padding: 80px;
+  }
+}
+
+/* Responsiveness overrides for the old .app shell on login */
+@media (min-width: 481px) {
+    /* Prevent the login page from being boxed on desktop */
+    body:has(.login-page) .app {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0;
+        box-shadow: none;
+    }
 }
 
 /* For pages that use the .canvas / .device-frame structure */
@@ -380,347 +456,6 @@ body {
   border: 1px solid rgba(72, 46, 135, 0.08);
   border-radius: 18px;
   box-shadow: 0 14px 34px rgba(10, 33, 77, 0.12);
-}
-
-/* Login Container */
-.login-container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Hero Section */
-.hero-section {
-  position: relative;
-  height: 45%;
-  overflow: hidden;
-  border-bottom-left-radius: 100px 30px;
-  border-bottom-right-radius: 100px 30px;
-}
-
-.illustration-wrapper {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.hero-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.app-title {
-  position: absolute;
-  top: 70px;
-  right: 35px;
-  color: white;
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1;
-  text-align: right;
-  z-index: 10;
-}
-
-/* Form Section */
-.form-section {
-  flex: 1;
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  background: white;
-  margin-top: -20px;
-  border-top-left-radius: 32px;
-  border-top-right-radius: 32px;
-  position: relative;
-  z-index: 15;
-  box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
-}
-
-/* Google Button */
-.google-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: white;
-  border: 1px solid #eee;
-  padding: 14px;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.google-btn:hover {
-  background: #fcfcfc;
-}
-
-.google-icon {
-  width: 20px;
-  height: 20px;
-}
-
-/* Divider */
-.divider-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin: 5px 0;
-}
-
-.divider-line {
-  height: 1px;
-  flex: 1;
-  background: #eee;
-}
-
-.divider-wrapper span {
-  color: #aaa;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* Form Inputs */
-.form-inputs {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.input-field {
-  width: 100%;
-  padding: 16px 20px;
-  border: 1px solid #f0f0f0;
-  background: #f9f9f9;
-  border-radius: 14px;
-  font-size: 15px;
-  font-family: inherit;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: #111;
-  background: white;
-}
-
-.input-group {
-  position: relative;
-}
-
-.arrow-icon {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #ccc;
-  font-size: 14px;
-}
-
-/* Primary Button */
-.primary-btn {
-  background: #000;
-  color: white;
-  border: none;
-  padding: 18px;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.primary-btn:hover {
-  opacity: 0.9;
-}
-
-.skip-link {
-  text-align: center;
-  font-size: 15px;
-  color: #888;
-  text-decoration: none;
-  font-weight: 600;
-  margin-top: 5px;
-}
-
-/* Responsiveness */
-@media (max-width: 430px) {
-  body { background: white; }
-  .app {
-    max-width: 100%;
-    height: 100vh;
-    border-radius: 0;
-    box-shadow: none;
-  }
-}
-
-/* --- Resume Info Page Styles --- */
-
-/* Resume Info Header */
-.resume-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 24px;
-  border-bottom: 1px solid #eee;
-  background: #fff;
-  flex-shrink: 0;
-}
-
-.header-left, .header-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.header-title {
-  font-size: 17px;
-  font-weight: 600;
-  color: #333;
-}
-
-.header-left i, .header-right i {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  color: #444;
-}
-
-.premium-icon {
-  color: #FFB800 !important; /* Gold */
-}
-
-.preview-btn-icon {
-  color: #482E87 !important;
-}
-
-/* Profile Picture section */
-.profile-pic-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 25px 20px 15px;
-}
-
-.profile-pic-container {
-  width: 90px;
-  height: 90px;
-  position: relative;
-  cursor: pointer;
-}
-
-.profile-pic-container img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid #fff;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.camera-badge {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background: #007bff;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #fff;
-}
-
-.camera-badge i {
-  width: 14px;
-  height: 14px;
-  color: #fff;
-}
-
-.profile-label {
-  font-size: 11px;
-  color: #888;
-  margin-top: 6px;
-  font-weight: 500;
-}
-
-/* Form Styles */
-.resume-form {
-  padding: 0 24px 120px;
-}
-
-.section-heading {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 12px;
-  position: relative;
-  padding-left: 18px;
-  display: flex;
-  align-items: center;
-}
-
-.section-heading::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #000;
-}
-
-.underlined-input, .underlined-textarea {
-  width: 100%;
-  border: none;
-  border-bottom: 1.2px solid #ddd;
-  padding: 8px 0;
-  font-family: inherit;
-  font-size: 14px;
-  background: transparent;
-  transition: all 0.3s ease;
-  margin-bottom: 10px;
-}
-
-.underlined-input:focus, .underlined-textarea:focus {
-  outline: none;
-  border-bottom-color: #482E87;
-  border-bottom-width: 1.5px;
-}
-
-.underlined-textarea {
-  resize: none;
-  height: 50px;
-}
-
-.input-group-labeled {
-  margin-bottom: 12px;
-}
-
-.input-group-labeled label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: -2px;
-}
-
-.small-add-btn {
-  background: #f8f9fa;
-  border: 1px solid #e0e0e0;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  color: #007bff;
-  cursor: pointer;
-  white-space: nowrap;
-  font-weight: 600;
-  margin-bottom: 10px;
 }
 
 .duration-row {
@@ -1243,11 +978,6 @@ body {
     font-size: 20px;
     color: #482E87;
     padding: 0 10px;
-  }
-
-  .sidebar-brand i {
-    width: 28px;
-    height: 28px;
   }
 
   .sidebar-step-list {
