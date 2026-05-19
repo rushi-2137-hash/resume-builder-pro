@@ -3,206 +3,185 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resume Builder - Preview</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Resume Preview</title>
+  <link rel="stylesheet" href="style.css?v=2.0">
   <!-- Google Font: Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- PDF export libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <!-- Data Persistence -->
   <script src="storage_manager.js"></script>
-  <!-- HTML2PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    /* Inline styles for preview engine specific layout */
+    /* Preview Page Specific Styles */
     .preview-canvas {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background: #f8f9fa;
+      width: 100%;
+      height: 100%;
+      background: #f0f0f0;
+      padding: 10px; /* Reduced padding for mobile */
+      overflow-y: auto;
+      overflow-x: hidden; /* CRITICAL: Prevent ghost width scroll */
     }
 
-    .resume-header {
-      background: #fff;
-      padding: 15px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #eee;
+    .resume-a4 {
+      width: 794px !important;
+      height: 1122px !important;
+      background: #fff !important;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      color: #333;
+      transform-origin: top left;
+      position: relative;
+      overflow: hidden;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      display: block !important;
+      min-height: 1122px !important;
+      min-width: 794px !important;
     }
 
     .resume-container {
-      flex: 1;
-      overflow-y: auto;
-      padding: 40px 20px;
-      display: flex;
-      justify-content: center;
-      background: #f1f3f6;
-    }
-
-    #resume-canvas {
-      background: #fff;
-      width: 210mm; /* A4 Width */
-      min-height: 297mm; /* A4 Height */
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      transform-origin: top center;
-      margin: 0 auto;
-    }
-
-    /* Fixed Desktop Action Header */
-    .preview-header-desktop {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: calc(100% - 360px); /* Account for active sidebar widths */
-      height: 70px;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid #eef0f2;
-      display: none; /* Shown via media query in style.css */
-      justify-content: flex-end;
-      align-items: center;
-      padding: 0 40px;
-      z-index: 1000;
-    }
-
-    @media (min-width: 481px) {
-      .preview-header-desktop {
-        display: flex;
-      }
-    }
-
-    .preview-top-actions {
-      display: flex;
-      gap: 12px;
-    }
-
-    .btn-download {
-      background: #482E87;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-print {
-      background: #fff;
-      color: #333;
-      border: 1px solid #ddd;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* Mobile Bottom Actions */
-    .preview-bottom-actions {
-      position: fixed;
-      bottom: 0;
-      left: 0;
+      overflow: hidden;
       width: 100%;
-      background: #fff;
-      padding: 20px;
-      display: flex;
-      gap: 12px;
-      border-top: 1px solid #eee;
-      z-index: 100;
     }
 
-    @media (min-width: 481px) {
-      .preview-bottom-actions {
-        display: none;
-      }
+    /* Global One-Page PDF Fixes */
+    @media print {
+      body, html { height: 297mm; overflow: hidden; margin: 0; padding: 0; }
+      .preview-top-actions, .bottom-navigation, .resume-header { display: none !important; }
+      .canvas, .device-frame, .preview-canvas { padding: 0 !important; margin: 0 !important; width: 210mm !important; height: 297mm !important; overflow: hidden !important; }
+      .resume-a4 { box-shadow: none !important; margin: 0 !important; transform: scale(1) !important; border: none !important; width: 210mm !important; height: 297mm !important; }
+      .res-section { page-break-inside: avoid; break-inside: avoid; }
     }
+
+    /* Template Engine Theme Variables (Default) */
+    :root {
+      --res-primary: #482E87;
+      --res-sidebar-bg: #0A214D;
+      --res-text-color: #333;
+      --res-heading-font: 'Outfit', sans-serif;
+    }
+
+    /* Layout Types */
+    .layout-sidebar { display: flex !important; height: 1122px !important; min-height: 1122px !important; width: 100% !important; }
+    .layout-standard { padding: 40px; height: 1122px !important; min-height: 1122px !important; box-sizing: border-box; width: 100% !important; }
+    .layout-centered { padding: 40px; text-align: center; height: 1122px !important; min-height: 1122px !important; box-sizing: border-box; width: 100% !important; }
+    .layout-split { display: flex !important; flex-direction: column; height: 1122px !important; min-height: 1122px !important; width: 100% !important; }
+    
+    /* Layout: Sidebar Variations */
+    .res-column-side { width: 32% !important; background: var(--res-sidebar-bg); color: #fff; padding: 30px 20px; height: 1122px !important; min-height: 1122px !important; }
+    .res-column-main { width: 68% !important; padding: 30px 25px; background: #fff; flex-grow: 1; height: 1122px !important; min-height: 1122px !important; }
+
+    /* Component Styles */
+    .res-section { margin-bottom: 22px; text-align: left; }
+    .res-section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--res-primary); border-bottom: 2px solid #f0f0f0; padding-bottom: 5px; margin-bottom: 12px; }
+    .res-name-big { font-size: 32px; font-weight: 700; line-height: 1.1; margin-bottom: 8px; }
+    .res-contact-bar { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: #666; margin-bottom: 20px; }
+    
+    .social-links-res { display: flex; flex-direction: column; gap: 6px; }
+    .social-item { display: flex; align-items: center; gap: 8px; font-size: 11px; color: inherit; text-decoration: none; }
+    .social-item i, .social-svg { width: 14px; height: 14px; opacity: 0.8; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+    .edu-score-row { align-items: center; display: flex; gap: 6px; margin-top: 3px; }
+    .edu-doc-link { align-items: center; color: #2196F3; display: inline-flex; height: 16px; justify-content: center; text-decoration: none; width: 16px; }
+    .edu-doc-link svg { height: 14px; width: 14px; }
+    .social-external-icon { color: #2196F3; fill: currentColor; height: 10px; margin-left: 0; opacity: 1; stroke: none; width: 10px; }
+
+    /* Buttons Fix */
+    .preview-top-actions { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+    .btn-download { background: #482E87; color: #fff; border: none; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(72, 46, 135, 0.2); transition: 0.2s; }
+    .btn-print { background: #fff; color: #482E87; border: 1.5px solid #482E87; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+    .btn-download:hover, .btn-print:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+    .btn-download:active { transform: scale(0.95); }
+
+    .profile-img-res { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; margin-bottom: 20px; border: 3px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    
+    /* Theme Variation Overrides */
+    .no-radius, .no-radius * { border-radius: 0 !important; }
+    .is-compact .res-section { margin-bottom: 12px; }
+    .is-compact .res-text { font-size: 11px; line-height: 1.4; }
+    .bold-headers .res-section-title { font-size: 18px; border-bottom-width: 3px; }
+    .ultra-minimal .res-section-title { border: none; padding: 0; margin-bottom: 5px; text-decoration: underline; }
+    .ultra-minimal .res-name-big { font-size: 26px; text-transform: uppercase; letter-spacing: 2px; }
+
+    /* Layout Specific Tweaks */
+    .layout-centered { padding: 50px 40px; }
+    .layout-centered .res-name-big { margin-bottom: 15px; }
+    .layout-centered .res-contact-bar { justify-content: center; }
+    .layout-centered .social-links-res { flex-direction: row; justify-content: center; flex-wrap: wrap; }
+
+    /* Specific Theme Highlights */
+    .theme-modern-gradient .layout-standard { background: #fff; }
+    .theme-modern-gradient::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 180px; background: var(--res-header-grad, linear-gradient(135deg, #482E87, #673AB7)); z-index: 0; }
+    .theme-modern-gradient .layout-standard > div { position: relative; z-index: 1; }
+    .theme-modern-gradient .res-name-big, .theme-modern-gradient .res-contact-bar span { color: #fff; }
+    
+    .theme-modern-pink .layout-standard { border-top: 15px solid var(--res-primary); }
+    .theme-ats-bold .res-section-title { background: #000; color: #fff; padding: 5px 12px; }
+
+    .profile-img-res { width: 95px; height: 95px; border-radius: 50%; object-fit: cover; margin-bottom: 20px; border: 4px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body class="dashboard-body">
 
   <div class="canvas">
     <div class="device-frame">
-      <div class="preview-canvas">
-        
-        <!-- Mobile Header (hidden on desktop focus mode) -->
-        <div class="resume-header">
-          <div class="header-left" onclick="window.location.href='templates.html'">
-            <i data-lucide="arrow-left"></i>
-            <span class="header-title">Preview</span>
-          </div>
-          <div class="header-right">
-            <i data-lucide="share-2"></i>
-          </div>
+      <!-- Header -->
+      <div class="resume-header">
+        <div class="header-left">
+          <i data-lucide="arrow-left" onclick="window.history.back()"></i>
+          <span class="header-title">Preview</span>
         </div>
+        <div class="header-right">
+          <i data-lucide="download" onclick="exportPDF()"></i>
+          <i data-lucide="share-2"></i>
+        </div>
+      </div>
 
-        <!-- Fixed Desktop Action Header -->
+      <div class="preview-canvas">
+        <!-- Desktop Action Header -->
         <div class="preview-header-desktop">
           <div class="preview-top-actions">
+            <button class="btn-download" onclick="exportPDF()">
+              <i data-lucide="download"></i> Download PDF
+            </button>
             <button class="btn-print" onclick="window.print()">
               <i data-lucide="printer"></i> Print
-            </button>
-            <button class="btn-download" onclick="downloadPDF()">
-              <i data-lucide="download"></i> Download PDF
             </button>
           </div>
         </div>
 
         <!-- Desktop Theme Sidebar -->
         <div class="desktop-preview-sidebar">
-          <h2 class="sidebar-header-title">Theme Colors</h2>
-          <div class="theme-selector-grid">
-            <div class="theme-circle active" style="background: #482E87;" onclick="setTheme('#482E87', this)"></div>
-            <div class="theme-circle" style="background: #2196F3;" onclick="setTheme('#2196F3', this)"></div>
-            <div class="theme-circle" style="background: #E91E63;" onclick="setTheme('#E91E63', this)"></div>
-            <div class="theme-circle" style="background: #4CAF50;" onclick="setTheme('#4CAF50', this)"></div>
-            <div class="theme-circle" style="background: #FF9800;" onclick="setTheme('#FF9800', this)"></div>
-            <div class="theme-circle" style="background: #795548;" onclick="setTheme('#795548', this)"></div>
-            <div class="theme-circle" style="background: #607D8B;" onclick="setTheme('#607D8B', this)"></div>
-            <div class="theme-circle" style="background: #263238;" onclick="setTheme('#263238', this)"></div>
-          </div>
-
-          <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px;">
-            <p style="font-size: 13px; color: #888; margin-bottom: 15px;">Tips: High quality PDF export works best on desktop browsers.</p>
+          <div class="sidebar-header-title">Select Theme</div>
+          <div class="theme-selector-grid" id="desktop-theme-grid">
+            <!-- Populated by JS -->
           </div>
         </div>
 
-        <!-- Main Resume Container -->
         <div class="resume-container">
-          <div id="resume-canvas">
-            <!-- Dynamic resume content will be injected here -->
+          <div id="resume-a4" class="resume-a4 template-modern-purple">
+            <!-- Dynamic Content Loads Here -->
           </div>
         </div>
+      </div>
 
-        <!-- Mobile Bottom Actions -->
-        <div class="preview-bottom-actions">
-          <button class="btn-print" style="flex: 1;" onclick="window.print()">Print</button>
-          <button class="btn-download" style="flex: 2;" onclick="downloadPDF()">Download PDF</button>
+      <!-- Bottom Navigation -->
+      <div class="bottom-navigation">
+        <div class="nav-item" onclick="window.location.href='home.html'">
+          <i data-lucide="home"></i>
+          <span>Home</span>
         </div>
-
-        <!-- Bottom Navigation (Desktop Sidebar Icons) -->
-        <div class="bottom-navigation">
-          <div class="nav-item" onclick="window.location.href='home.html'">
-            <i data-lucide="home"></i>
-            <span>Home</span>
-          </div>
-          <div class="nav-item" onclick="window.location.href='templates.html'">
-            <i data-lucide="file-text"></i>
-            <span>Templates</span>
-          </div>
-          <div class="nav-item active">
-            <i data-lucide="eye"></i>
-            <span>Preview</span>
-          </div>
+        <div class="nav-item" onclick="window.location.href='templates.html'">
+          <i data-lucide="file-text"></i>
+          <span>Templates</span>
         </div>
-
+        <div class="nav-item" onclick="window.location.href='home.html'">
+          <i data-lucide="user"></i>
+          <span>Profile</span>
+        </div>
       </div>
     </div>
   </div>
@@ -210,138 +189,422 @@
   <script>
     lucide.createIcons();
 
-    const resumeCanvas = document.getElementById('resume-canvas');
-    const params = new URLSearchParams(window.location.search);
-    const templateId = params.get('template') || 'modern-purple';
-    
-    let currentThemeColor = '#482E87';
+    // Get selected template from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateType = urlParams.get('template') || 'modern-purple';
+    const resumeContainer = document.getElementById('resume-a4');
 
-    function loadResumeData() {
-      const activeId = StorageManager.getActiveId();
-      const data = StorageManager.getResume(activeId);
+    // 30 Themes Configuration
+    const themeConfigs = {
+      // Modern
+      'modern-purple': { primary: '#482E87', layout: 'sidebar', bodyBg: '#ffffff', sideBg: '#482E87' },
+      'modern-pink': { primary: '#FF4081', layout: 'standard', border: '5px solid #FF4081' },
+      'modern-blue': { primary: '#2196F3', layout: 'standard' },
+      'modern-dark': { primary: '#263238', layout: 'sidebar', sideBg: '#263238' },
+      'modern-gradient': { primary: '#673AB7', layout: 'standard', headerGradient: 'linear-gradient(135deg, #482E87, #673AB7)' },
       
-      if (!data) {
-        resumeCanvas.innerHTML = '<div style="padding: 50px; text-align: center;">No resume data found. Please go back and fill the form.</div>';
-        return;
-      }
+      // ATS
+      'ats-standard': { primary: '#000000', layout: 'standard', noRadius: true },
+      'ats-compact': { primary: '#333333', layout: 'standard', compact: true },
+      'ats-clean': { primary: '#444444', layout: 'standard' },
+      'ats-simple': { primary: '#222222', layout: 'standard' },
+      'ats-bold': { primary: '#000000', layout: 'standard', boldHeaders: true },
 
-      renderTemplate(templateId, data);
-      scaleResume();
+      // Minimal
+      'min-classic': { primary: '#555555', layout: 'centered' },
+      'min-elegant': { primary: '#795548', layout: 'centered' },
+      'min-soft': { primary: '#9E9E9E', layout: 'standard' },
+      'min-vibe': { primary: '#607D8B', layout: 'centered' },
+      'min-pure': { primary: '#000000', layout: 'standard', ultraMinimal: true },
+
+      // Creative
+      'creative': { primary: '#E91E63', layout: 'sidebar', sideBg: '#263238' },
+      'creative-pop': { primary: '#FFD600', layout: 'standard', accent: '#000' },
+      'creative-neon': { primary: '#00E5FF', layout: 'sidebar', sideBg: '#1A237E' },
+      'creative-split': { primary: '#FF5722', layout: 'split' },
+      'creative-circle': { primary: '#8BC34A', layout: 'standard' },
+
+      // Corporate
+      'executive': { primary: '#1B2944', layout: 'sidebar', sideBg: '#0A214D' },
+      'corp-banker': { primary: '#01579B', layout: 'sidebar', sideBg: '#01579B' },
+      'corp-lawyer': { primary: '#1A237E', layout: 'sidebar', sideBg: '#1A237E' },
+      'corp-manager': { primary: '#2E7D32', layout: 'sidebar', sideBg: '#2E7D32' },
+      'corp-director': { primary: '#37474F', layout: 'sidebar', sideBg: '#37474F' },
+
+      // Student
+      'stu-bright': { primary: '#FF9800', layout: 'standard' },
+      'stu-fresh': { primary: '#00BCD4', layout: 'standard' },
+      'stu-intern': { primary: '#4CAF50', layout: 'standard' },
+      'stu-academic': { primary: '#673AB7', layout: 'standard' },
+      'stu-entry': { primary: '#795548', layout: 'standard' }
+    };
+
+    function switchTheme(themeId) {
+      const config = themeConfigs[themeId] || themeConfigs['modern-purple'];
+      
+      // Update Container Class
+      resumeContainer.className = \`resume-a4 theme-\${themeId} layout-\${config.layout}\`;
+      
+      // Update Variables
+      resumeContainer.style.setProperty('--res-primary', config.primary);
+      if (config.sideBg) resumeContainer.style.setProperty('--res-sidebar-bg', config.sideBg);
+      if (config.headerGradient) resumeContainer.style.setProperty('--res-header-grad', config.headerGradient);
+      
+      // Apply Special Flags
+      if (config.noRadius) resumeContainer.classList.add('no-radius');
+      if (config.compact) resumeContainer.classList.add('is-compact');
+      if (config.boldHeaders) resumeContainer.classList.add('bold-headers');
+      if (config.ultraMinimal) resumeContainer.classList.add('ultra-minimal');
+
+      // Update URL without reload
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('template', themeId);
+      window.history.pushState({}, '', newUrl);
+
+      // Re-render
+      renderResume();
+      
+      // Update Sidebar UI
+      document.querySelectorAll('.theme-circle').forEach(c => {
+        c.classList.toggle('active', c.dataset.id === themeId);
+      });
     }
 
-    function renderTemplate(id, data) {
-      // Basic structure for a modern template
-      const html = `
-        <div class="resume-wrapper" style="padding: 40px; color: #333; font-family: sans-serif; position: relative; height: 100%;">
-          <!-- Header -->
-          <div class="resume-inner-header" style="border-left: 6px solid ${currentThemeColor}; padding-left: 20px; margin-bottom: 30px;">
-            <h1 style="font-size: 32px; margin: 0; color: #111;">${data.full_name || 'Your Name'}</h1>
-            <div style="display: flex; gap: 15px; margin-top: 10px; font-size: 14px; color: #666;">
-              <span>${data.email || ''}</span>
-              <span>${data.contact_no || ''}</span>
-              <span>${data.location || ''}</span>
+    function initDesktopSidebar() {
+      const grid = document.getElementById('desktop-theme-grid');
+      if (!grid) return;
+
+      grid.innerHTML = Object.keys(themeConfigs).map(key => \`
+        <div class="theme-circle \${key === templateType ? 'active' : ''}" 
+             data-id="\${key}" 
+             style="background: \${themeConfigs[key].primary};" 
+             onclick="switchTheme('\${key}')"
+             title="\${key.replace(/-/g, ' ')}">
+        </div>
+      \`).join('');
+    }
+
+    const config = themeConfigs[templateType] || themeConfigs['modern-purple'];
+    
+    // Set Theme Variables
+    resumeContainer.style.setProperty('--res-primary', config.primary);
+    if (config.sideBg) resumeContainer.style.setProperty('--res-sidebar-bg', config.sideBg);
+    if (config.headerGradient) resumeContainer.style.setProperty('--res-header-grad', config.headerGradient);
+    
+    // Set Classes
+    resumeContainer.className = \`resume-a4 theme-\${templateType} layout-\${config.layout}\`;
+    if (config.noRadius) resumeContainer.classList.add('no-radius');
+    if (config.compact) resumeContainer.classList.add('is-compact');
+    if (config.boldHeaders) resumeContainer.classList.add('bold-headers');
+    if (config.ultraMinimal) resumeContainer.classList.add('ultra-minimal');
+
+    // Load Data using StorageManager
+    const activeId = StorageManager.getActiveId();
+    const data = activeId ? (StorageManager.getResume(activeId) || {}) : {};
+    const socialIcons = {
+      github: '<svg class="social-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5a10.5 10.5 0 0 0-6 0C8 2 7 2 7 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 6 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>',
+      linkedin: '<svg class="social-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6Z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>',
+      globe: '<svg class="social-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 0 20"/><path d="M12 2a15.3 15.3 0 0 0 0 20"/></svg>',
+      award: '<svg class="social-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/><circle cx="12" cy="8" r="6"/></svg>',
+      file: '<svg class="social-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>'
+    };
+    const externalLinkIcon = '<svg class="social-svg social-external-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.41l-9.83 9.83-1.41-1.41L17.59 5H14V3Z"/><path d="M5 5h7v2H7v10h10v-5h2v7H5V5Z"/></svg>';
+
+    function renderResume() {
+      // Use config from earlier
+      const layoutType = config.layout;
+      
+      // Shared Sub-templates
+      const getContactInfo = () => \`
+        <div class="res-contact-bar">
+          \${data.email ? \`<a href="mailto:\${data.email}" class="res-link" style="color: inherit; text-decoration: none;">\${data.email}</a>\` : ''}
+          \${data.contact_no ? \`<span>\${data.contact_no}</span>\` : ''}
+          \${data.location ? \`<span>\${data.location}</span>\` : ''}
+        </div>
+      \`;
+
+      const getSocials = () => \`
+        <div class="social-links-res">
+          \${data.link_github ? \`<a href="\${data.link_github}" target="_blank" class="social-item">\${socialIcons.github} GitHub \${externalLinkIcon}</a>\` : ''}
+          \${data.link_linkedin ? \`<a href="\${data.link_linkedin}" target="_blank" class="social-item">\${socialIcons.linkedin} LinkedIn \${externalLinkIcon}</a>\` : ''}
+          \${data.link_portfolio ? \`<a href="\${data.link_portfolio}" target="_blank" class="social-item">\${socialIcons.globe} Portfolio \${externalLinkIcon}</a>\` : ''}
+          \${data.link_certificates ? \`<a href="\${data.link_certificates}" target="_blank" class="social-item">\${socialIcons.award} Certificates \${externalLinkIcon}</a>\` : ''}
+          \${data.link_degree ? \`<a href="\${data.link_degree}" target="_blank" class="social-item">\${socialIcons.file} Degree/Marksheet \${externalLinkIcon}</a>\` : ''}
+        </div>
+      \`;
+
+      const getContents = () => \`
+        \${data.summary ? \`
+          <div class="res-section">
+            <div class="res-section-title">Profile</div>
+            <div class="res-text">\${data.summary}</div>
+          </div>
+        \` : ''}
+        
+        \${data.education && data.education.length > 0 ? \`
+          <div class="res-section">
+            <div class="res-section-title">Education</div>
+            \${data.education.map(edu => \`
+              <div class="res-item-row">
+                <div style="display: flex; justify-content: space-between;">
+                  <div class="res-bold">\${edu.degree}</div>
+                  <div class="res-date">\${edu.start_year || ''} - \${edu.end_year || ''}</div>
+                </div>
+                <div class="res-text" style="font-style: italic; opacity: 0.8;">\${edu.college} \${edu.location ? \`, \${edu.location}\` : ''}</div>
+                \${edu.cgpa || edu.marksheet_link ? \`
+                  <div class="edu-score-row">
+                    \${edu.cgpa ? \`<div class="res-text" style="font-size: 11px; font-weight: 600; color: var(--res-primary);">CGPA / Percentage: \${edu.cgpa}</div>\` : ''}
+                    \${edu.marksheet_link ? \`<a href="\${edu.marksheet_link}" target="_blank" class="edu-doc-link" title="Marksheet soft copy">\${socialIcons.file}</a>\` : ''}
+                  </div>
+                \` : ''}
+                \${edu.desc ? \`<div class="res-text" style="font-size: 11px; opacity: 0.7;">\${edu.desc}</div>\` : ''}
+              </div>
+            \`).join('')}
+          </div>
+        \` : ''}
+
+        \${data.experience && data.experience.length > 0 ? \`
+          <div class="res-section">
+            <div class="res-section-title">Experience</div>
+            \${data.experience.map(exp => \`
+              <div class="res-item-row">
+                <div style="display: flex; justify-content: space-between;">
+                  <div class="res-bold">\${exp.title}</div>
+                  <div class="res-date">\${exp.duration}</div>
+                </div>
+                <div class="res-text" style="font-style: italic; opacity: 0.8;">\${exp.company} \${exp.location ? \`, \${exp.location}\` : ''}</div>
+                <div class="res-text" style="font-size: 11px; opacity: 0.7; margin-top: 4px;">\${exp.desc || ''}</div>
+              </div>
+            \`).join('')}
+          </div>
+        \` : ''}
+
+        \${data.projects_list && data.projects_list.length > 0 ? \`
+          <div class="res-section">
+            <div class="res-section-title">Projects</div>
+            \${data.projects_list.map(proj => \`
+              <div class="res-item-row">
+                <div class="res-bold">\${proj.name}</div>
+                <div class="res-text" style="font-size: 11px; font-weight: 500; color: var(--res-primary);">Tech: \${proj.tech || ''}</div>
+                <div style="display: flex; gap: 10px; margin: 4px 0;">
+                   \${proj.github ? \`<a href="\${proj.github}" target="_blank" style="font-size: 10px; color: #666; text-decoration: underline; display: inline-flex; align-items: center; gap: 3px;">GitHub \${externalLinkIcon}</a>\` : ''}
+                   \${proj.live ? \`<a href="\${proj.live}" target="_blank" style="font-size: 10px; color: #666; text-decoration: underline;">Live Demo</a>\` : ''}
+                </div>
+                <div class="res-text" style="font-size: 11px; opacity: 0.7;">\${proj.desc || ''}</div>
+              </div>
+            \`).join('')}
+          </div>
+        \` : ''}
+
+        \${data.skills || data.skills_description ? \`
+          <div class="res-section">
+            <div class="res-section-title">Skills</div>
+            \${data.skills_description ? \`<div class="res-text" style="font-size: 11px; line-height: 1.45; opacity: 0.78; margin-bottom: 8px;">\${data.skills_description}</div>\` : ''}
+            \${data.skills ? \`
+              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                \${data.skills.split(',').filter(s => s.trim()).map(s => \`<span style="background: #f0f0f0; padding: 3px 10px; border-radius: 4px; font-size: 10px; color: #444;">\${s.trim()}</span>\`).join('')}
+              </div>
+            \` : ''}
+          </div>
+        \` : ''}
+      \`;
+
+      // 3. Assemble Layout
+      let html = '';
+      if (layoutType === 'sidebar') {
+        html = \`
+          <div class="layout-sidebar">
+            <div class="res-column-side">
+              \${data.profile_pic ? \`<img src="\${data.profile_pic}" class="profile-img-res">\` : ''}
+              <div class="res-name-big" style="font-size: 24px;">\${data.full_name || 'Your Name'}</div>
+              <div style="margin-top: 20px;">
+                <div class="res-section-title" style="color: #fff; border-color: rgba(255,255,255,0.2); font-size: 11px;">Contact</div>
+                <div class="res-text" style="color: rgba(255,255,255,0.8); font-size: 11px;">\${data.email || ''}</div>
+                <div class="res-text" style="color: rgba(255,255,255,0.8); font-size: 11px;">\${data.contact_no || ''}</div>
+                <div class="res-text" style="color: rgba(255,255,255,0.8); font-size: 11px;">\${data.location || ''}</div>
+              </div>
+              <div style="margin-top: 30px;">
+                <div class="res-section-title" style="color: #fff; border-color: rgba(255,255,255,0.2); font-size: 11px;">Socials</div>
+                \${getSocials()}
+              </div>
+            </div>
+            <div class="res-column-main">
+              \${getContents()}
             </div>
           </div>
-
-          <!-- Summary -->
-          ${data.summary ? `
-            <div class="resume-section" style="margin-bottom: 25px;">
-              <h2 style="font-size: 18px; color: ${currentThemeColor}; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 12px;">Profile</h2>
-              <p style="font-size: 14px; line-height: 1.6; color: #444;">${data.summary}</p>
-            </div>
-          ` : ''}
-
-          <!-- Experience -->
-          ${data.experience && data.experience.length > 0 ? `
-            <div class="resume-section" style="margin-bottom: 25px;">
-              <h2 style="font-size: 18px; color: ${currentThemeColor}; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 12px;">Experience</h2>
-              ${data.experience.map(exp => `
-                <div style="margin-bottom: 15px;">
-                  <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 15px;">
-                    <span>${exp.title}</span>
-                    <span>${exp.duration}</span>
-                  </div>
-                  <div style="font-style: italic; color: #666; font-size: 14px; margin-bottom: 5px;">${exp.company}, ${exp.location}</div>
-                  <p style="font-size: 13px; line-height: 1.5; color: #555;">${exp.desc}</p>
+        \`;
+      } else if (layoutType === 'split') {
+        html = \`
+          <div class="layout-split">
+             <div style="background: var(--res-primary); color: #fff; padding: 40px; text-align: center;">
+                <div class="res-name-big" style="color: #fff;">\${data.full_name || 'Your Name'}</div>
+                \${getContactInfo()}
+             </div>
+             <div style="padding: 40px; flex-grow: 1; background: #fff;">
+                \${getContents()}
+                <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                  \${getSocials()}
                 </div>
-              `).join('')}
+             </div>
+          </div>
+        \`;
+      } else {
+        const isCentered = layoutType === 'centered' || templateType.includes('min');
+        html = \`
+          <div class="layout-standard \${isCentered ? 'layout-centered' : ''}">
+            <div style="margin-bottom: 30px; \${isCentered ? 'text-align: center;' : ''}">
+              <div class="res-name-big">\${data.full_name || 'Your Name'}</div>
+              \${getContactInfo()}
+              <div style="margin-top: 10px;">
+                \${getSocials()}
+              </div>
             </div>
-          ` : ''}
+            \${getContents()}
+          </div>
+        \`;
+      }
 
-          <!-- Education -->
-          ${data.education && data.education.length > 0 ? `
-            <div class="resume-section" style="margin-bottom: 25px;">
-              <h2 style="font-size: 18px; color: ${currentThemeColor}; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 12px;">Education</h2>
-              ${data.education.map(edu => `
-                <div style="margin-bottom: 12px;">
-                  <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 15px;">
-                    <span>${edu.degree}</span>
-                    <span>${edu.start_year} - ${edu.end_year}</span>
-                  </div>
-                  <div style="color: #666; font-size: 14px;">${edu.college}, ${edu.location}</div>
-                  ${edu.cgpa ? `<div style="font-size: 13px; color: #555; margin-top: 2px;">CGPA: ${edu.cgpa}</div>` : ''}
-                </div>
-              `).join('')}
-            </div>
-          ` : ''}
-
-          <!-- Skills -->
-          ${data.skills ? `
-            <div class="resume-section">
-              <h2 style="font-size: 18px; color: ${currentThemeColor}; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 12px;">Skills</h2>
-              <p style="font-size: 14px; line-height: 1.6; color: #444;">${data.skills}</p>
-            </div>
-          ` : ''}
-        </div>
-      `;
-      resumeCanvas.innerHTML = html;
+      resumeContainer.innerHTML = html;
+      lucide.createIcons();
+      scaleResume();
     }
 
     function scaleResume() {
       const container = document.querySelector('.resume-container');
-      const canvas = document.getElementById('resume-canvas');
-      if (!container || !canvas) return;
+      const resume = document.getElementById('resume-a4');
+      if (!container || !resume) return;
 
-      const sidebarWidth = window.innerWidth > 480 ? 360 : 0; // Sidebar (80) + Theme Bar (280)
-      const availableWidth = window.innerWidth - sidebarWidth - 80; // 80px buffer
-      const canvasWidth = 794; // 210mm at 96dpi approx
-      
-      let scale = availableWidth / canvasWidth;
-      if (scale > 1) scale = 1;
+      const resumeNaturalWidth = 794;
+      const resumeNaturalHeight = 1122;
+      const availableWidth = container.offsetWidth - 80;
 
-      // Centering logic
-      const marginLeft = (container.offsetWidth - (canvasWidth * scale)) / 2;
-      
-      canvas.style.transform = `scale(${scale})`;
-      canvas.style.marginLeft = `${Math.max(0, marginLeft)}px`;
-      
-      // Precision Height Adjustment to ensure scrollability
-      // We manually calculate the visual height after scaling to add a bottom spacer
-      const visualHeight = 1123 * scale; // A4 Height is 297mm approx 1123px
-      canvas.style.marginBottom = `${-(1123 - visualHeight) + 40}px`;
+      // Force scrollbar visibility to reassure user
+      container.style.overflowY = 'scroll';
+
+      if (availableWidth < resumeNaturalWidth) {
+        const scale = availableWidth / resumeNaturalWidth;
+        resume.style.transformOrigin = 'top left';
+        resume.style.transform = \`scale(\${scale})\`;
+        
+        const leftPadding = (container.offsetWidth - (resumeNaturalWidth * scale)) / 2;
+        resume.style.marginLeft = \`\${Math.max(20, leftPadding)}px\`;
+        
+        // Use a more reliable height matching for transform
+        const scaledVisualHeight = resumeNaturalHeight * scale;
+        resume.style.marginBottom = "0px"; // Reset
+        // We set the height of the container's content area manually if needed
+        // but actually setting margin-bottom on the resume is the standard way to 'shrink' the layout box
+        const heightReduction = resumeNaturalHeight - scaledVisualHeight;
+        resume.style.marginBottom = \`-\${heightReduction - 60}px\`; 
+      } else {
+        resume.style.transform = 'scale(1)';
+        resume.style.transformOrigin = 'top center';
+        resume.style.marginLeft = 'auto';
+        resume.style.marginRight = 'auto';
+        resume.style.marginBottom = '60px';
+      }
     }
 
-    function setTheme(color, el) {
-      currentThemeColor = color;
-      document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active'));
-      el.classList.add('active');
-      loadResumeData();
+    window.addEventListener('load', scaleResume);
+    window.addEventListener('resize', scaleResume);
+    setTimeout(scaleResume, 500); // Back-up for slow font loading
+
+    function normalizePdfUrl(url) {
+      const trimmed = (url || '').trim();
+      if (!trimmed) return '';
+      if (/^(https?:|mailto:|tel:)/i.test(trimmed)) return trimmed;
+      return \`https://\${trimmed}\`;
     }
 
-    function downloadPDF() {
-      const element = document.getElementById('resume-canvas');
-      const opt = {
-        margin: 0,
-        filename: 'resume.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-      html2pdf().from(element).set(opt).save();
+    function addSocialLinkAnnotations(pdf, element) {
+      const elementRect = element.getBoundingClientRect();
+      const pxToMmX = 210 / 794;
+      const pxToMmY = 297 / 1122;
+
+      element.querySelectorAll('.social-item[href], .edu-doc-link[href]').forEach(link => {
+        const url = normalizePdfUrl(link.getAttribute('href'));
+        if (!url) return;
+
+        const rect = link.getBoundingClientRect();
+        const x = (rect.left - elementRect.left) * pxToMmX;
+        const y = (rect.top - elementRect.top) * pxToMmY;
+        const width = rect.width * pxToMmX;
+        const height = rect.height * pxToMmY;
+
+        pdf.link(x, y, width, height, { url });
+      });
     }
 
-    window.onresize = scaleResume;
-    window.onload = loadResumeData;
+    async function exportPDF() {
+      const element = document.getElementById('resume-a4');
+      const btn = document.querySelector('.btn-download');
+      const headerDownloadIcon = document.querySelector('.header-right [data-lucide="download"]');
+      const originalText = btn.innerHTML;
+      const originalTransform = element.style.transform;
+      let downloadFailed = false;
+
+      btn.disabled = true;
+      btn.innerHTML = '<i data-lucide="refresh-cw" class="spin"></i> Generating...';
+      if (headerDownloadIcon) headerDownloadIcon.style.pointerEvents = 'none';
+      lucide.createIcons();
+
+      try {
+        if (document.fonts && document.fonts.ready) {
+          await document.fonts.ready;
+        }
+
+        element.style.transform = 'none';
+        element.style.margin = '0';
+
+        const canvas = await html2canvas(element, {
+          backgroundColor: '#ffffff',
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          width: 794,
+          height: 1122,
+          windowWidth: 794,
+          windowHeight: 1122,
+          scrollX: 0,
+          scrollY: 0
+        });
+
+        const imageData = canvas.toDataURL('image/jpeg', 0.98);
+        const jsPDFConstructor = window.jspdf?.jsPDF || window.jsPDF;
+        if (!jsPDFConstructor) {
+          throw new Error('PDF library failed to load.');
+        }
+        const pdf = new jsPDFConstructor('p', 'mm', 'a4');
+
+        pdf.addImage(imageData, 'JPEG', 0, 0, 210, 297);
+        addSocialLinkAnnotations(pdf, element);
+        pdf.save(\`\${data.full_name || 'resume'}.pdf\`);
+      } catch (err) {
+        downloadFailed = true;
+        console.error('PDF Export Error:', err);
+        btn.innerHTML = '<i data-lucide="alert-circle"></i> Download failed';
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          lucide.createIcons();
+        }, 1800);
+      } finally {
+        element.style.transform = originalTransform;
+        element.style.margin = '';
+        btn.disabled = false;
+        if (!downloadFailed) {
+          btn.innerHTML = originalText;
+          lucide.createIcons();
+        }
+        if (headerDownloadIcon) headerDownloadIcon.style.pointerEvents = '';
+        scaleResume();
+      }
+    }
+
+    window.onload = () => {
+      initDesktopSidebar();
+      renderResume();
+    };
   </script>
 </body>
 </html>
