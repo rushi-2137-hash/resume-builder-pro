@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resume Builder - Resume Info</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2.0">
   <!-- Google Font: Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -351,7 +351,7 @@
         });
 
         // Update Step Indicator
-        document.getElementById('step-number').innerText = `Step ${Stepper.currentStep}`;
+        document.getElementById('step-number').innerText = \`Step \${Stepper.currentStep}\`;
 
         // Toggle buttons
         document.getElementById('prev-step-btn').classList.toggle('hidden', Stepper.currentStep === 1);
@@ -435,111 +435,111 @@
       },
 
       addEducation: (data = {}) => {
-        const html = `
+        const html = \`
           <div class="dynamic-item-card">
             <span class="remove-item-btn" onclick="this.parentElement.remove(); Stepper.saveCurrentStep();">
               <i data-lucide="x"></i>
             </span>
             <div class="input-group-labeled">
               <label>Degree / Qualification</label>
-              <input type="text" data-key="degree" value="${data.degree || ''}" placeholder="e.g. Bachelor of Technology" class="underlined-input dynamic-input">
+              <input type="text" data-key="degree" value="\${data.degree || ''}" placeholder="e.g. Bachelor of Technology" class="underlined-input dynamic-input">
             </div>
             <div class="input-group-labeled">
               <label>School / University Name</label>
-              <input type="text" data-key="college" value="${data.college || ''}" placeholder="e.g. Stanford University" class="underlined-input dynamic-input">
+              <input type="text" data-key="college" value="\${data.college || ''}" placeholder="e.g. Stanford University" class="underlined-input dynamic-input">
             </div>
             <div class="input-group-labeled">
               <label>Location</label>
-              <input type="text" data-key="location" value="${data.location || ''}" placeholder="e.g. California, USA" class="underlined-input dynamic-input">
+              <input type="text" data-key="location" value="\${data.location || ''}" placeholder="e.g. California, USA" class="underlined-input dynamic-input">
             </div>
             <div class="duration-row" style="display: flex; gap: 10px; margin-top: 10px;">
               <div style="flex: 1;">
                 <label>Start Year</label>
-                <input type="text" data-key="start_year" value="${data.start_year || ''}" placeholder="2020" class="underlined-input dynamic-input">
+                <input type="text" data-key="start_year" value="\${data.start_year || ''}" placeholder="2020" class="underlined-input dynamic-input">
               </div>
               <div style="flex: 1;">
                 <label>End Year</label>
-                <input type="text" data-key="end_year" value="${data.end_year || ''}" placeholder="2024" class="underlined-input dynamic-input">
+                <input type="text" data-key="end_year" value="\${data.end_year || ''}" placeholder="2024" class="underlined-input dynamic-input">
               </div>
             </div>
             <div class="input-group-labeled" style="margin-top: 10px;">
               <label>Marksheet-soft copy</label>
-              <input type="url" data-key="marksheet_link" value="${data.marksheet_link || ''}" placeholder="https://drive.google.com/..." class="underlined-input dynamic-input">
+              <input type="url" data-key="marksheet_link" value="\${data.marksheet_link || ''}" placeholder="https://drive.google.com/..." class="underlined-input dynamic-input">
             </div>
             <div class="input-group-labeled" style="margin-top: 10px;">
               <label>CGPA / Percentage</label>
-              <input type="text" data-key="cgpa" value="${data.cgpa || ''}" placeholder="e.g. 3.9 / 4.0" class="underlined-input dynamic-input">
+              <input type="text" data-key="cgpa" value="\${data.cgpa || ''}" placeholder="e.g. 3.9 / 4.0" class="underlined-input dynamic-input">
             </div>
             <div class="input-group-labeled" style="margin-top: 10px;">
               <label>Brief Description</label>
-              <textarea data-key="desc" placeholder="Major in Computer Science, specialized in AI..." class="underlined-textarea dynamic-input" style="height: 60px;">${data.desc || ''}</textarea>
+              <textarea data-key="desc" placeholder="Major in Computer Science, specialized in AI..." class="underlined-textarea dynamic-input" style="height: 60px;">\${data.desc || ''}</textarea>
             </div>
           </div>
-        `;
+        \`;
         document.getElementById('education-list').insertAdjacentHTML('beforeend', html);
         lucide.createIcons();
       },
 
       addExperience: (data = {}) => {
-        const html = `
+        const html = \`
           <div class="dynamic-item-card">
             <span class="remove-item-btn" onclick="this.parentElement.remove(); Stepper.saveCurrentStep();">
               <i data-lucide="x"></i>
             </span>
             <div class="input-group-labeled">
               <label>Job Title</label>
-              <input type="text" data-key="title" value="${data.title || ''}" placeholder="e.g., Senior Frontend Developer" class="underlined-input dynamic-input">
+              <input type="text" data-key="title" value="\${data.title || ''}" placeholder="e.g., Senior Frontend Developer" class="underlined-input dynamic-input">
             </div>
             <div class="input-group-labeled">
               <label>Company Name</label>
-              <input type="text" data-key="company" value="${data.company || ''}" placeholder="e.g., Google" class="underlined-input dynamic-input">
+              <input type="text" data-key="company" value="\${data.company || ''}" placeholder="e.g., Google" class="underlined-input dynamic-input">
             </div>
             <div class="input-group-labeled">
               <label>Location</label>
-              <input type="text" data-key="location" value="${data.location || ''}" placeholder="Remote / California" class="underlined-input dynamic-input">
+              <input type="text" data-key="location" value="\${data.location || ''}" placeholder="Remote / California" class="underlined-input dynamic-input">
             </div>
             <div class="input-group-labeled">
               <label>Duration</label>
-              <input type="text" data-key="duration" value="${data.duration || ''}" placeholder="Jan 2022 - Present" class="underlined-input dynamic-input">
+              <input type="text" data-key="duration" value="\${data.duration || ''}" placeholder="Jan 2022 - Present" class="underlined-input dynamic-input">
             </div>
             <div class="input-group-labeled" style="margin-top: 10px;">
               <label>Key Responsibilities</label>
-              <textarea data-key="desc" placeholder="Developed complex user interfaces using React..." class="underlined-textarea dynamic-input" style="height: 80px;">${data.desc || ''}</textarea>
+              <textarea data-key="desc" placeholder="Developed complex user interfaces using React..." class="underlined-textarea dynamic-input" style="height: 80px;">\${data.desc || ''}</textarea>
             </div>
           </div>
-        `;
+        \`;
         document.getElementById('experience-list').insertAdjacentHTML('beforeend', html);
         lucide.createIcons();
       },
 
       addProject: (data = {}) => {
-        const html = `
+        const html = \`
           <div class="dynamic-item-card">
             <span class="remove-item-btn" onclick="this.parentElement.remove(); Stepper.saveCurrentStep();">
               <i data-lucide="x"></i>
             </span>
             <div class="input-group-labeled">
               <label>Project Title</label>
-              <input type="text" data-key="name" value="${data.name || ''}" placeholder="e.g. E-commerce Dashboard" class="underlined-input dynamic-input" style="font-weight: 600;">
+              <input type="text" data-key="name" value="\${data.name || ''}" placeholder="e.g. E-commerce Dashboard" class="underlined-input dynamic-input" style="font-weight: 600;">
             </div>
             <div class="input-group-labeled">
               <label>Tech Stack</label>
-              <input type="text" data-key="tech" value="${data.tech || ''}" placeholder="e.g. React, Firebase, Tailwind" class="underlined-input dynamic-input" style="font-size: 13px;">
+              <input type="text" data-key="tech" value="\${data.tech || ''}" placeholder="e.g. React, Firebase, Tailwind" class="underlined-input dynamic-input" style="font-size: 13px;">
             </div>
             <div class="input-group-labeled">
               <label>Project Description</label>
-              <textarea data-key="desc" placeholder="Briefly describe the project and your role..." class="underlined-textarea dynamic-input" style="height: 60px;">${data.desc || ''}</textarea>
+              <textarea data-key="desc" placeholder="Briefly describe the project and your role..." class="underlined-textarea dynamic-input" style="height: 60px;">\${data.desc || ''}</textarea>
             </div>
             <div class="input-group-labeled" style="margin-top: 5px;">
               <label>GitHub Link</label>
-              <input type="text" data-key="github" value="${data.github || ''}" placeholder="https://github.com/..." class="underlined-input dynamic-input" style="font-size: 12px; color: #482E87;">
+              <input type="text" data-key="github" value="\${data.github || ''}" placeholder="https://github.com/..." class="underlined-input dynamic-input" style="font-size: 12px; color: #482E87;">
             </div>
             <div class="input-group-labeled" style="margin-top: 5px;">
               <label>Live Link</label>
-              <input type="text" data-key="live" value="${data.live || ''}" placeholder="https://project.com/..." class="underlined-input dynamic-input" style="font-size: 12px; color: #482E87;">
+              <input type="text" data-key="live" value="\${data.live || ''}" placeholder="https://project.com/..." class="underlined-input dynamic-input" style="font-size: 12px; color: #482E87;">
             </div>
           </div>
-        `;
+        \`;
         document.getElementById('projects-list').insertAdjacentHTML('beforeend', html);
         lucide.createIcons();
       }
