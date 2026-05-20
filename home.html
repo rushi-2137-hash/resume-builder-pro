@@ -145,9 +145,7 @@
     };
 
     window.shareResumeLink = (id) => {
-      // Set active ID so the preview page loads this resume
       StorageManager.setActiveId(id);
-      // Construct the preview URL
       const previewUrl = window.location.origin + window.location.pathname.replace('home.html', 'resume_preview.html') + `?template=modern-purple&id=${id}`;
       
       if (navigator.share) {
@@ -157,7 +155,7 @@
         });
       } else {
         navigator.clipboard.writeText(previewUrl);
-        alert('Resume link copied to clipboard!');
+        alert('Link copied to clipboard!');
       }
     };
 
