@@ -1,31 +1,375 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resume Preview - Resume Builder</title>
-  <link rel="stylesheet" href="style.css?v=2.0">
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="storage_manager.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Preview</title>
+    <link rel="stylesheet" href="style.css?v=3.5">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="storage_manager.js"></script>
+    <style>
+        /* A4 Page Styling */
+        #resume-render-area {
+            width: 210mm;
+            min-height: 297mm;
+            height: auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 0 auto;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Resume Template: Modern Purple (Milan) */
+        .modern-purple .header-section {
+            background: #482E87;
+            color: white;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modern-purple .profile-col { width: 120px; height: 120px; }
+        .modern-purple .profile-col img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid rgba(255,255,255,0.2); }
+        .modern-purple .main-content { display: flex; flex: 1; }
+        .modern-purple .sidebar { width: 33%; background: #f8f9fa; padding: 30px; border-right: 1px solid #eee; }
+        .modern-purple .content { width: 67%; padding: 30px; background: #fff; }
+        
+        .section-title { font-size: 16px; font-weight: 700; color: #482E87; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid #482E87; padding-bottom: 5px; }
+        .item-title { font-weight: 700; color: #333; margin-top: 10px; }
+        .item-subtitle { color: #666; font-size: 13px; font-style: italic; }
+        .item-desc { font-size: 13px; color: #444; margin-top: 5px; line-height: 1.5; }
+        .social-link { display: flex; align-items: center; gap: 8px; color: #555; text-decoration: none; font-size: 12px; margin-bottom: 8px; cursor: pointer; }
+        .social-link:hover { color: #482E87; }
+        .social-link i { width: 14px; height: 14px; }
+
+        /* Responsive Mobile Overrides */
+        @media (max-width: 480px) {
+            #resume-render-area {
+                width: 100%;
+                margin: 0;
+                transform: scale(calc(100vw / 210mm)) translateZ(0);
+                transform-origin: top left;
+                box-shadow: none;
+            }
+            .preview-top-actions {
+              position: fixed;
+              bottom: 20px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 90%;
+              display: flex;
+              gap: 10px;
+              background: rgba(255,255,255,0.95);
+              padding: 12px;
+              border-radius: 20px;
+              box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+              z-index: 1000;
+              backdrop-filter: blur(10px);
+              border: 1px solid #eee;
+            }
+            .preview-top-actions button {
+              flex: 1;
+              padding: 12px;
+              border-radius: 12px;
+              font-size: 14px;
+            }
+        }
+        
+        /* Desktop Workspace Enhancements */
+        @media (min-width: 481px) {
+            body { background: #f1f3f6; overflow: hidden; }
+            .preview-canvas {
+                display: flex;
+                height: 100vh;
+                margin-left: 80px;
+            }
+            .resume-container {
+                flex: 1;
+                padding-top: 110px;
+                padding-bottom: 80px;
+                overflow-y: auto;
+            }
+        }
+
+        .btn-download { background: #482E87; color: white; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-print { background: #f0f0f0; color: #333; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-share { background: #e8f0fe; color: #4285f4; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        .theme-circle { width: 40px; height: 40px; border-radius: 50%; display: inline-block; cursor: pointer; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .theme-circle.active { border-color: #482E87; }
+    </style>
 </head>
 <body class="dashboard-body">
-  <div class="canvas">
-    <div class="device-frame">
-      <div class="resume-header">
-        <div class="header-left" onclick="window.history.back()">
-          <i data-lucide="arrow-left"></i>
-          <span class="header-title">Preview</span>
+
+    <div class="canvas">
+        <div class="device-frame">
+            <!-- Mobile Header (Hidden on Desktop) -->
+            <div class="resume-header">
+                <div class="header-left">
+                  <i data-lucide="arrow-left" onclick="window.history.back()"></i>
+                  <span class="header-title">Live Preview</span>
+                </div>
+                <div class="header-right">
+                  <i data-lucide="share-2" onclick="shareResume()"></i>
+                </div>
+            </div>
+
+            <div class="preview-canvas">
+                <!-- Desktop Sidebar Navigation -->
+                <div class="bottom-navigation">
+                    <div class="nav-item" onclick="window.location.href='home.html'">
+                      <i data-lucide="home"></i>
+                      <span>Home</span>
+                    </div>
+                    <div class="nav-item" onclick="window.location.href='resume_info.html'">
+                      <i data-lucide="edit-3"></i>
+                      <span>Edit</span>
+                    </div>
+                    <div class="nav-item active">
+                      <i data-lucide="eye"></i>
+                      <span>Preview</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Theme Sidebar -->
+                <div class="desktop-preview-sidebar">
+                    <h3 class="sidebar-header-title">Customize</h3>
+                    
+                    <div class="sidebar-section">
+                        <label class="input-label" style="margin-bottom: 15px; color: #888;">THEME COLOR</label>
+                        <div class="theme-selector-grid">
+                            <div class="theme-circle active" style="background: #482E87;" onclick="changeThemeColor('#482E87', this)"></div>
+                            <div class="theme-circle" style="background: #2196F3;" onclick="changeThemeColor('#2196F3', this)"></div>
+                            <div class="theme-circle" style="background: #E91E63;" onclick="changeThemeColor('#E91E63', this)"></div>
+                            <div class="theme-circle" style="background: #2E7D32;" onclick="changeThemeColor('#2E7D32', this)"></div>
+                            <div class="theme-circle" style="background: #FF9800;" onclick="changeThemeColor('#FF9800', this)"></div>
+                            <div class="theme-circle" style="background: #263238;" onclick="changeThemeColor('#263238', this)"></div>
+                            <div class="theme-circle" style="background: #795548;" onclick="changeThemeColor('#795548', this)"></div>
+                            <div class="theme-circle" style="background: #00BCD4;" onclick="changeThemeColor('#00BCD4', this)"></div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section" style="margin-top: 40px;">
+                        <label class="input-label" style="margin-bottom: 8px; color: #888;">FONT FAMILY</label>
+                        <select class="input-field" style="height: 44px; font-size: 14px;" onchange="document.getElementById('resume-render-area').style.fontFamily = this.value">
+                            <option value="'Outfit', sans-serif">Outfit (Default)</option>
+                            <option value="'Inter', sans-serif">Inter</option>
+                            <option value="'Roboto', sans-serif">Roboto</option>
+                            <option value="serif">Classic Serif</option>
+                        </select>
+                    </div>
+
+                    <div style="flex: 1;"></div>
+                    <div style="padding-top: 20px; border-top: 1px solid #f0f0f0;">
+                        <p style="font-size: 11px; color: #aaa; text-align: center;">Choose Template Gallery to change layout</p>
+                    </div>
+                </div>
+
+                <!-- Main Preview Area -->
+                <div class="resume-container">
+                    <!-- Desktop Header Actions -->
+                    <div class="preview-header-desktop">
+                        <div class="preview-top-actions">
+                            <button class="btn-share" onclick="shareResume()">
+                                <i data-lucide="share-2"></i> Share
+                            </button>
+                            <button class="btn-print" onclick="window.print()">
+                                <i data-lucide="printer"></i> Print
+                            </button>
+                            <button class="btn-download" onclick="downloadPDF()">
+                                <i data-lucide="download"></i> Download PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Render Area -->
+                    <div id="resume-render-area">
+                        <!-- Content will be injected by JavaScript -->
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="scrollable-content">
-        <div id="resume-a4-page" style="padding: 20px; background: #fff;">
-          <!-- Content populated Dynamicly -->
-        </div>
-      </div>
     </div>
-  </div>
-  <script>lucide.createIcons();</script>
+
+    <script>
+        lucide.createIcons();
+
+        // Get active resume data
+        const activeId = StorageManager.getActiveId();
+        const resumeData = StorageManager.getResume(activeId) || {};
+        
+        function renderResume() {
+            const container = document.getElementById('resume-render-area');
+            const data = resumeData;
+            
+            // Map icons for links
+            const githubIcon = '<i data-lucide="github"></i>';
+            const linkedinIcon = '<i data-lucide="linkedin"></i>';
+            const portfolioIcon = '<i data-lucide="globe"></i>';
+            const locationIcon = '<i data-lucide="map-pin"></i>';
+            const phoneIcon = '<i data-lucide="phone"></i>';
+            const emailIcon = '<i data-lucide="mail"></i>';
+            const certIcon = '<i data-lucide="award"></i>';
+            const degreeIcon = '<i data-lucide="book-open"></i>';
+
+            container.innerHTML = `
+                <div class="modern-purple" id="template-root">
+                    <div class="header-section">
+                        <div class="name-col">
+                            <h1 style="font-size: 36px; margin: 0; letter-spacing: -0.5px;">${data.full_name || 'YOUR NAME'}</h1>
+                            <p style="font-size: 16px; opacity: 0.9; margin-top: 5px;">${data.experience?.[0]?.title || 'Professional Title'}</p>
+                            <div style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+                                ${data.contact_no ? `<span style="font-size: 11px; display: flex; align-items:center; gap: 4px;">${phoneIcon} ${data.contact_no}</span>` : ''}
+                                ${data.email ? `<span style="font-size: 11px; display: flex; align-items:center; gap: 4px;">${emailIcon} ${data.email}</span>` : ''}
+                                ${data.location ? `<span style="font-size: 11px; display: flex; align-items:center; gap: 4px;">${locationIcon} ${data.location}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="profile-col">
+                            <img src="${data.profile_pic || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" alt="Profile">
+                        </div>
+                    </div>
+                    
+                    <div class="main-content">
+                        <div class="sidebar">
+                            <h3 class="section-title">Connect</h3>
+                            ${data.link_github ? `<a href="${data.link_github}" target="_blank" class="social-link">${githubIcon} GitHub</a>` : ''}
+                            ${data.link_linkedin ? `<a href="${data.link_linkedin}" target="_blank" class="social-link">${linkedinIcon} LinkedIn</a>` : ''}
+                            ${data.link_portfolio ? `<a href="${data.link_portfolio}" target="_blank" class="social-link">${portfolioIcon} Portfolio</a>` : ''}
+                            ${data.link_certificates ? `<a href="${data.link_certificates}" target="_blank" class="social-link">${certIcon} Certificates</a>` : ''}
+                            ${data.link_degree ? `<a href="${data.link_degree}" target="_blank" class="social-link">${degreeIcon} Degree/Marksheet</a>` : ''}
+
+                            <div style="margin-top: 30px;">
+                                <h3 class="section-title">Skills</h3>
+                                <p style="font-size: 13px; font-weight: 700; color: #333; margin-top: 10px;">Primary Skills</p>
+                                <p style="font-size: 12px; color: #555; line-height: 1.6;">${data.skills || 'Your skills list...'}</p>
+                                ${data.skills_description ? `
+                                    <p style="font-size: 12px; color: #777; font-style: italic; margin-top: 8px;">${data.skills_description}</p>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="content">
+                            ${data.summary ? `
+                                <h3 class="section-title">Summary</h3>
+                                <p class="item-desc">${data.summary}</p>
+                            ` : ''}
+
+                            <div style="margin-top: 25px;">
+                                <h3 class="section-title">Experience</h3>
+                                ${data.experience?.map(exp => `
+                                    <div style="margin-bottom: 20px;">
+                                        <div class="item-title">${exp.title || 'Job Title'}</div>
+                                        <div class="item-subtitle">${exp.company || 'Company'} | ${exp.duration || 'Duration'}</div>
+                                        <p class="item-desc">${exp.desc || 'Brief description of your role and accomplishments.'}</p>
+                                    </div>
+                                `).join('') || '<p class="item-desc">List your work history...</p>'}
+                            </div>
+
+                            <div style="margin-top: 25px;">
+                                <h3 class="section-title">Education</h3>
+                                ${data.education?.map(edu => `
+                                    <div style="margin-bottom: 15px;">
+                                        <div class="item-title">${edu.degree || 'Degree'}</div>
+                                        <div class="item-subtitle">${edu.college || 'University'} | ${edu.start_year || '2020'} - ${edu.end_year || '2024'}</div>
+                                        <p class="item-desc">${edu.desc || ''}</p>
+                                        ${edu.marksheet_link ? `<a href="${edu.marksheet_link}" target="_blank" style="font-size: 11px; color: #482E87; text-decoration: none; display: flex; align-items:center; gap: 4px; margin-top: 4px;">${certIcon} View Marksheet</a>` : ''}
+                                    </div>
+                                `).join('') || '<p class="item-desc">Your educational background...</p>'}
+                            </div>
+
+                            <div style="margin-top: 25px;">
+                                <h3 class="section-title">Projects</h3>
+                                ${data.projects_list?.map(proj => `
+                                    <div style="margin-bottom: 15px;">
+                                        <div class="item-title">${proj.name || 'Project Name'}</div>
+                                        <div class="item-subtitle">${proj.tech || 'Tech Stack'}</div>
+                                        <p class="item-desc">${proj.desc || ''}</p>
+                                        <div style="display: flex; gap: 15px; margin-top: 5px;">
+                                            ${proj.github ? `<a href="${proj.github}" target="_blank" style="font-size: 11px; color: #482E87; text-decoration:none;">GitHub</a>` : ''}
+                                            ${proj.live ? `<a href="${proj.live}" target="_blank" style="font-size: 11px; color: #482E87; text-decoration:none;">Live Demo</a>` : ''}
+                                        </div>
+                                    </div>
+                                `).join('') || '<p class="item-desc">Showcase your best projects...</p>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function changeThemeColor(color, el) {
+            document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            
+            // Apply color to all elements using the theme color
+            const styleEl = document.getElementById('dynamic-theme-style') || document.createElement('style');
+            styleEl.id = 'dynamic-theme-style';
+            styleEl.innerHTML = `
+                .modern-purple .header-section { background: ${color} !important; }
+                .section-title { color: ${color} !important; border-bottom-color: ${color} !important; }
+                .social-link:hover { color: ${color} !important; }
+            `;
+            document.head.appendChild(styleEl);
+        }
+
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const element = document.getElementById('resume-render-area');
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = 'Generating...';
+            btn.disabled = true;
+
+            try {
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    windowWidth: 794 // 210mm at 96dpi
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`resume_${activeId}.pdf`);
+            } catch (err) {
+                console.error('PDF generation failed:', err);
+                alert('Could not generate PDF. Please try again or use the Print option.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function shareResume() {
+            const url = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My Professional Resume',
+                    text: 'Check out my resume built with ResumeBuilder!',
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(url);
+                alert('Preview link copied to clipboard!');
+            }
+        }
+
+        window.onload = renderResume;
+    </script>
 </body>
 </html>
