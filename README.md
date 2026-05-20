@@ -1,2 +1,3 @@
-# resume-builder-pro
-A professional Resume Builder application with 30+ templates and PDF export functionality.
+# Resume Builder Pro
+
+Modern, professional resume builder with 30+ templates and interactive editing flow.

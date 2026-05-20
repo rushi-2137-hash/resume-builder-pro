@@ -4,184 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resume Preview - Resume Builder</title>
-  <link rel="stylesheet" href="style.css?v=3.0">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=2.0">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="storage_manager.js"></script>
-  <style>
-    .resume-container {
-      width: 100%;
-      height: 100%;
-      overflow-y: auto;
-      background: #f1f3f6;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px 0 100px;
-    }
-
-    /* A4 Preview Canvas */
-    .preview-canvas {
-      width: 210mm;
-      min-height: 297mm;
-      background: #fff;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      position: relative;
-      transform-origin: top center;
-    }
-
-    @media (max-width: 210mm) {
-      .preview-canvas {
-        width: 95vw;
-        height: auto;
-        min-height: 135vw;
-        margin: 0 auto;
-      }
-    }
-
-    /* Responsive preview top actions */
-    .preview-top-actions {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.95);
-      padding: 12px 24px;
-      border-radius: 40px;
-      display: flex;
-      gap: 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-      z-index: 1000;
-      border: 1px solid rgba(0,0,0,0.05);
-      backdrop-filter: blur(10px);
-    }
-
-    .preview-action-btn {
-      padding: 10px 20px;
-      border-radius: 20px;
-      border: none;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center; gap: 8px;
-    }
-
-    .btn-download { background: #482E87; color: white; }
-    .btn-print { background: #f0f0f5; color: #482E87; }
-    .btn-share { background: #f0f0f5; color: #482E87; }
-
-    /* Hide UI elements from printed scan */
-    .no-print { display: none !important; }
-
-    /* Standard Resume Template Elements */
-    .res-header { margin-bottom: 25px; }
-    .res-name { font-size: 24px; font-weight: 700; color: #333; margin-bottom: 5px; }
-    .res-sub { font-size: 14px; color: #666; display: flex; gap: 15px; flex-wrap: wrap; }
-    .res-section { margin-bottom: 20px; }
-    .res-section-title { font-size: 16px; font-weight: 700; color: #482E87; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px; padding-bottom: 4px; }
-  </style>
 </head>
 <body class="dashboard-body">
-
   <div class="canvas">
     <div class="device-frame">
-      <!-- Fixed Header -->
       <div class="resume-header">
         <div class="header-left" onclick="window.history.back()">
           <i data-lucide="arrow-left"></i>
-          <span class="header-title">Final Result</span>
-        </div>
-        <div class="header-right">
-          <i data-lucide="share-2" onclick="shareResume()"></i>
-          <i data-lucide="download" onclick="downloadPDF()"></i>
+          <span class="header-title">Preview</span>
         </div>
       </div>
-
-      <!-- Preview Side-by-Side (Desktop only styles in style.css) -->
-      <div class="preview-canvas-wrapper" style="flex: 1; overflow: hidden; display: flex;">
-        <!-- Theme Sidebar (Desktop) -->
-        <div class="desktop-preview-sidebar">
-           <h3 class="sidebar-header-title">Templates</h3>
-           <div class="theme-selector-grid" id="desktop-theme-grid">
-               <!-- Theme circles in desktop-->
-           </div>
+      <div class="scrollable-content">
+        <div id="resume-a4-page" style="padding: 20px; background: #fff;">
+          <!-- Content populated Dynamicly -->
         </div>
-
-        <div class="resume-container">
-          <!-- A4 Page Target -->
-          <div id="resume-a4-page" class="preview-canvas">
-            <!-- Dynamic Content Injected Here -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Mobile Actions -->
-      <div class="preview-top-actions">
-        <button class="preview-action-btn btn-print" onclick="window.print()">
-          <i data-lucide="printer"></i> Print
-        </button>
-        <button class="preview-action-btn btn-download" onclick="downloadPDF()">
-          <i data-lucide="download"></i> Download
-        </button>
-        <button class="preview-action-btn btn-share" onclick="shareResume()">
-          <i data-lucide="share-2"></i> Share
-        </button>
       </div>
     </div>
   </div>
-
-  <script id="preview-logic">
-    const { jsPDF } = window.jspdf;
-    const urlParams = new URLSearchParams(window.location.search);
-    const templateId = urlParams.get('template') || 'modern-purple';
-    
-    function loadResume() {
-      const activeId = StorageManager.getActiveId();
-      const data = StorageManager.getResume(activeId);
-      if (!data) return;
-
-      const page = document.getElementById('resume-a4-page');
-      
-      // Basic Structure setup
-      page.innerHTML = `
-        <div style="padding: 40px;">
-          <div class="res-header">
-            <h1 class="res-name">${data.full_name || 'Your Name'}</h1>
-            <div class="res-sub">
-              ${data.email ? `<span><i data-lucide="mail" style="width:12px"></i> ${data.email}</span>` : ''}
-              ${data.contact_no ? `<span><i data-lucide="phone" style="width:12px"></i> ${data.contact_no}</span>` : ''}
-              ${data.location ? `<span><i data-lucide="map-pin" style="width:12px"></i> ${data.location}</span>` : ''}
-            </div>
-            <div class="res-sub" style="margin-top: 8px;">
-               ${data.link_github ? `<a href="${data.link_github}" style="color:#666; font-size:12px;">GitHub</a>` : ''}
-               ${data.link_linkedin ? `<a href="${data.link_linkedin}" style="color:#666; font-size:12px;">LinkedIn</a>` : ''}
-            </div>
-          </div>
-
-          ${data.summary ? `
-            <div class="res-section">
-              <h2 class="res-section-title">Professional Summary</h2>
-              <p style="font-size:13px; line-height:1.6; color:#444;">${data.summary}</p>
-            </div>
-          ` : ''}
-
-          ${data.experience && data.experience.length > 0 ? `
-            <div class="res-section">
-              <h2 class="res-section-title">Work Experience</h2>
-              ${data.experience.map(exp => `
-                <div style="margin-bottom: 12px;">
-                  <div style="display:flex; justify-content:space-between; font-weight:600; font-size:14px;">
-                    <span>${exp.title}</span>
-                    <span>${exp.duration}</span>
-                  </div>
-                  <div style="color:#666; font-size:13px; margin-bottom:4px;">${exp.company} | ${exp.location}</div>
-                  <p style="font-size:12px; color:#555;">${exp.desc}</p>
-                </div>
-              `).join('')}
-            </div>
-          ` : ''}
+  <script>lucide.createIcons();</script>
+</body>
+</html>
