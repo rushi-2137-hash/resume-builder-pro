@@ -3,71 +3,109 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Resume Builder - Login</title>
-  <link rel="stylesheet" href="style.css?v=2.0" />
+  <title>Login | ResumePro Builder</title>
+  <meta name="description" content="Sign in to ResumePro to build professional, ATS-friendly resumes with modern templates." />
+  <link rel="stylesheet" href="style.css?v=4.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons for small UI elements -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="dashboard-body">
   <div class="login-page">
-    <!-- Left Side: Hero Section (Desktop Only) -->
+    
+    <!-- Left Side: Professional Hero Section -->
     <div class="login-hero-side">
       <div class="hero-decoration"></div>
       <div class="login-hero-content">
-        <div style="background: rgba(255,255,255,0.15); padding: 8px 16px; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 30px; backdrop-filter: blur(10px);">
-           <span style="color: #FFD700;">✦</span> Premium AI Resume Builder
+        <div style="background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 30px; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 32px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
+           <span style="color: #FFD700;">★</span> The #1 AI-Powered Resume Builder
         </div>
-        <h1 class="login-hero-title">Unlock Your<br>Career Potential.</h1>
-        <p class="login-hero-subtitle">Build professional, ATS-ready resumes in minutes with our 30+ stunning templates. Stand out from the crowd and land your dream job.</p>
+        <h1 class="login-hero-title">Your Career,<br>Elevated with Style.</h1>
+        <p class="login-hero-subtitle">Design professional, ATS-ready resumes in minutes. Choose from 30+ premium templates crafted by industry experts.</p>
         
-        <div style="position: relative; margin-top: 40px;">
-           <img src="https://img.freepik.com/premium-vector/online-curriculum-vitae-concept-illustration_114360-192.jpg" alt="Resume Builder Pro" class="hero-mockup-img">
+        <div class="hero-mockup-wrapper">
+           <img src="login_hero_illustration_1779243297251.png" alt="ResumePro Template Preview" class="hero-mockup-img">
+        </div>
+        
+        <div style="margin-top: 50px; display: flex; gap: 30px; opacity: 0.7;">
+          <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 24px; font-weight: 800;">1.2M+</span>
+            <span style="font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Trusted Users</span>
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 24px; font-weight: 800;">30+</span>
+            <span style="font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Premium Themes</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Right Side: Form Section -->
+    <!-- Right Side: Clean Authentication Form -->
     <div class="login-form-side">
       <div class="form-container-inner">
-        <div style="margin-bottom: 40px;">
-          <h2 style="font-size: 34px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px; letter-spacing: -0.5px;">Welcome back</h2>
-          <p style="color: #666; font-size: 15px; font-weight: 500;">Please enter your details to sign in.</p>
+        <!-- Minimal Logo -->
+        <div class="app-logo">
+          <div class="logo-icon">R</div>
+          <span class="logo-text">ResumePro</span>
         </div>
 
-        <button id="google-login" class="google-btn" onclick="window.location.href='home.html'" style="width: 100%; margin-bottom: 24px; height: 56px; border-radius: 14px; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 12px; border: 1.5px solid #eee; background: white; transition: all 0.3s ease;">
-          <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" class="google-icon" alt="Google" style="width: 22px;">
+        <div style="margin-bottom: 32px;">
+          <h2 style="font-size: 32px; font-weight: 800; color: #111827; margin-bottom: 8px; letter-spacing: -1px;">Welcome back</h2>
+          <p style="color: #6B7280; font-size: 15px;">Experience the most advanced resume builder today.</p>
+        </div>
+
+        <!-- Social Login -->
+        <button id="google-login" class="google-btn" onclick="window.location.href='home.html'">
+          <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google" style="width: 20px;">
           Continue with Google
         </button>
 
-        <div class="divider-wrapper" style="margin-bottom: 24px;">
+        <div class="divider-wrapper">
           <div class="divider-line"></div>
-          <span style="font-size: 12px; font-weight: 700; color: #bbb; padding: 0 15px; text-transform: uppercase; letter-spacing: 1px;">OR</span>
+          <span class="divider-text">or sign in with email</span>
           <div class="divider-line"></div>
         </div>
 
-        <div class="form-inputs" style="gap: 16px; margin-bottom: 24px; display: flex; flex-direction: column;">
+        <!-- Credentials Form -->
+        <div class="auth-form">
           <div class="input-group">
-            <label style="display: block; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px;">Email Address</label>
-            <input type="email" id="email" placeholder="name@company.com" class="input-field" style="height: 56px; background: #f8f9fc; border: 1px solid #eef0f2; border-radius: 12px; width: 100%; padding: 0 16px;">
+            <label class="input-label" for="email">Email address</label>
+            <input type="email" id="email" placeholder="e.g. alex@example.com" class="input-field">
           </div>
 
           <div class="input-group">
-            <label style="display: block; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px;">Password</label>
-            <input type="password" id="password" placeholder="••••••••" class="input-field" style="height: 56px; background: #f8f9fc; border: 1px solid #eef0f2; border-radius: 12px; width: 100%; padding: 0 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <label class="input-label" for="password" style="margin-bottom: 0;">Password</label>
+              <a href="#" style="font-size: 13px; color: #482E87; font-weight: 600; text-decoration: none;">Forgot password?</a>
+            </div>
+            <input type="password" id="password" placeholder="••••••••" class="input-field">
           </div>
+
+          <button id="email-continue" class="primary-btn" onclick="window.location.href='home.html'">Sign In</button>
         </div>
-
-        <button id="email-continue" class="primary-btn" onclick="window.location.href='home.html'" style="width: 100%; height: 58px; border-radius: 14px; font-size: 16px; font-weight: 700; margin-bottom: 24px; background: #0A214D; color: white; border: none; cursor: pointer; box-shadow: 0 10px 20px rgba(10,33,77,0.15);">Sign In</button>
         
-        <div style="text-align: center; border-top: 1px solid #f0f0f0; padding-top: 24px;">
-          <a href="home.html" class="skip-link" style="font-size: 15px; color: #482E87; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-            Skip for now
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-          </a>
+        <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #F3F4F6;">
+          <p style="font-size: 15px; color: #6B7280;">New to ResumePro? <a href="#" style="color: #482E87; font-weight: 700; text-decoration: none;">Create account</a></p>
+          <div style="margin-top: 20px;">
+            <a href="home.html" class="skip-link" style="font-size: 14px; color: #9CA3AF; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;">
+              Skip and continue as guest
+              <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+            </a>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+    lucide.createIcons();
+    
+    // Add simple hover effect for skip link
+    const skipLink = document.querySelector('.skip-link');
+    skipLink.onmouseenter = () => skipLink.style.color = '#482E87';
+    skipLink.onmouseleave = () => skipLink.style.color = '#9CA3AF';
+  </script>
 </body>
 </html>
