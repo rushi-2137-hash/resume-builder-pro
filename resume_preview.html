@@ -446,7 +446,7 @@
              <div style="padding: 40px; flex-grow: 1; background: #fff;">
                 ${getContents()}
                 <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                   ${getSocials()}
+                  ${getSocials()}
                 </div>
              </div>
           </div>
@@ -480,12 +480,10 @@
       const resumeNaturalWidth = 794;
       const resumeNaturalHeight = 1122;
       
-      // On mobile devices, shrink the horizontal padding drastically to maximize readability!
       const isMobile = window.innerWidth <= 480;
       const horizontalPadding = isMobile ? 24 : 80;
       const availableWidth = container.offsetWidth - horizontalPadding;
 
-      // Force scrollbar visibility to reassure user
       container.style.overflowY = 'scroll';
 
       if (availableWidth < resumeNaturalWidth) {
@@ -496,9 +494,8 @@
         const leftPadding = (container.offsetWidth - (resumeNaturalWidth * scale)) / 2;
         resume.style.marginLeft = `${Math.max(10, leftPadding)}px`;
         
-        // Use a more reliable height matching for transform
         const scaledVisualHeight = resumeNaturalHeight * scale;
-        resume.style.marginBottom = "0px"; // Reset
+        resume.style.marginBottom = "0px"; 
         
         const heightReduction = resumeNaturalHeight - scaledVisualHeight;
         const bottomGap = isMobile ? 30 : 60;
@@ -514,7 +511,7 @@
 
     window.addEventListener('load', scaleResume);
     window.addEventListener('resize', scaleResume);
-    setTimeout(scaleResume, 500); // Back-up for slow font loading
+    setTimeout(scaleResume, 500); 
 
     function normalizePdfUrl(url) {
       const trimmed = (url || '').trim();
@@ -619,7 +616,6 @@
         if (navigator.share) {
           await navigator.share(shareData);
         } else {
-          // Fallback to copying URL
           await navigator.clipboard.writeText(window.location.href);
           alert('Resume link copied to clipboard!');
         }
