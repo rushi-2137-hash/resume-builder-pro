@@ -92,8 +92,8 @@
     /* Buttons Fix */
     .preview-top-actions { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
     .btn-download { background: #482E87; color: #fff; border: none; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(72, 46, 135, 0.2); transition: 0.2s; }
-    .btn-print { background: #fff; color: #482E87; border: 1.5px solid #482E87; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-    .btn-download:hover, .btn-print:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+    .btn-print, .btn-share { background: #fff; color: #482E87; border: 1.5px solid #482E87; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+    .btn-download:hover, .btn-print:hover, .btn-share:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
     .btn-download:active { transform: scale(0.95); }
 
     .profile-img-res { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; margin-bottom: 20px; border: 3px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -136,7 +136,7 @@
         </div>
         <div class="header-right">
           <i data-lucide="download" onclick="exportPDF()"></i>
-          <i data-lucide="share-2"></i>
+          <i data-lucide="share-2" onclick="shareResume()"></i>
         </div>
       </div>
 
@@ -145,10 +145,13 @@
         <div class="preview-header-desktop">
           <div class="preview-top-actions">
             <button class="btn-download" onclick="exportPDF()">
-               <i data-lucide="download"></i> Download PDF
+              <i data-lucide="download"></i> Download PDF
             </button>
             <button class="btn-print" onclick="window.print()">
-               <i data-lucide="printer"></i> Print
+              <i data-lucide="printer"></i> Print
+            </button>
+            <button class="btn-share" onclick="shareResume()">
+              <i data-lucide="share-2"></i> Share
             </button>
           </div>
         </div>
@@ -443,7 +446,7 @@
              <div style="padding: 40px; flex-grow: 1; background: #fff;">
                 ${getContents()}
                 <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                  ${getSocials()}
+                   ${getSocials()}
                 </div>
              </div>
           </div>
@@ -543,6 +546,7 @@
       const element = document.getElementById('resume-a4');
       const btn = document.querySelector('.btn-download');
       const headerDownloadIcon = document.querySelector('.header-right [data-lucide="download"]');
+      const shareBtn = document.querySelector('.btn-share');
       const originalText = btn.innerHTML;
       const originalTransform = element.style.transform;
       let downloadFailed = false;
@@ -602,6 +606,26 @@
         }
         if (headerDownloadIcon) headerDownloadIcon.style.pointerEvents = '';
         scaleResume();
+      }
+    }
+
+    async function shareResume() {
+      const shareData = {
+        title: 'Check out my Resume',
+        text: 'I just built my professional resume using Resume Builder Pro. Take a look!',
+        url: window.location.href
+      };
+
+      try {
+        if (navigator.share) {
+          await navigator.share(shareData);
+        } else {
+          // Fallback to copying URL
+          await navigator.clipboard.writeText(window.location.href);
+          alert('Resume link copied to clipboard!');
+        }
+      } catch (err) {
+        console.error('Sharing failed:', err);
       }
     }
 
