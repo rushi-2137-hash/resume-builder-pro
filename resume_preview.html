@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resume Preview</title>
-  <link rel="stylesheet" href="style.css?v=2.0">
+  <link rel="stylesheet" href="style.css?v=3.0">
   <!-- Google Font: Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -145,10 +145,10 @@
         <div class="preview-header-desktop">
           <div class="preview-top-actions">
             <button class="btn-download" onclick="exportPDF()">
-              <i data-lucide="download"></i> Download PDF
+               <i data-lucide="download"></i> Download PDF
             </button>
             <button class="btn-print" onclick="window.print()">
-              <i data-lucide="printer"></i> Print
+               <i data-lucide="printer"></i> Print
             </button>
           </div>
         </div>
@@ -243,7 +243,7 @@
       const config = themeConfigs[themeId] || themeConfigs['modern-purple'];
       
       // Update Container Class
-      resumeContainer.className = \`resume-a4 theme-\${themeId} layout-\${config.layout}\`;
+      resumeContainer.className = `resume-a4 theme-${themeId} layout-${config.layout}`;
       
       // Update Variables
       resumeContainer.style.setProperty('--res-primary', config.primary);
@@ -274,14 +274,14 @@
       const grid = document.getElementById('desktop-theme-grid');
       if (!grid) return;
 
-      grid.innerHTML = Object.keys(themeConfigs).map(key => \`
-        <div class="theme-circle \${key === templateType ? 'active' : ''}" 
-             data-id="\${key}" 
-             style="background: \${themeConfigs[key].primary};" 
-             onclick="switchTheme('\${key}')"
-             title="\${key.replace(/-/g, ' ')}">
+      grid.innerHTML = Object.keys(themeConfigs).map(key => `
+        <div class="theme-circle ${key === templateType ? 'active' : ''}" 
+             data-id="${key}" 
+             style="background: ${themeConfigs[key].primary};" 
+             onclick="switchTheme('${key}')"
+             title="${key.replace(/-/g, ' ')}">
         </div>
-      \`).join('');
+      `).join('');
     }
 
     const config = themeConfigs[templateType] || themeConfigs['modern-purple'];
@@ -292,7 +292,7 @@
     if (config.headerGradient) resumeContainer.style.setProperty('--res-header-grad', config.headerGradient);
     
     // Set Classes
-    resumeContainer.className = \`resume-a4 theme-\${templateType} layout-\${config.layout}\`;
+    resumeContainer.className = `resume-a4 theme-${templateType} layout-${config.layout}`;
     if (config.noRadius) resumeContainer.classList.add('no-radius');
     if (config.compact) resumeContainer.classList.add('is-compact');
     if (config.boldHeaders) resumeContainer.classList.add('bold-headers');
@@ -315,153 +315,153 @@
       const layoutType = config.layout;
       
       // Shared Sub-templates
-      const getContactInfo = () => \`
+      const getContactInfo = () => `
         <div class="res-contact-bar">
-          \${data.email ? \`<a href="mailto:\${data.email}" class="res-link" style="color: inherit; text-decoration: none;">\${data.email}</a>\` : ''}
-          \${data.contact_no ? \`<span>\${data.contact_no}</span>\` : ''}
-          \${data.location ? \`<span>\${data.location}</span>\` : ''}
+          ${data.email ? `<a href="mailto:${data.email}" class="res-link" style="color: inherit; text-decoration: none;">${data.email}</a>` : ''}
+          ${data.contact_no ? `<span>${data.contact_no}</span>` : ''}
+          ${data.location ? `<span>${data.location}</span>` : ''}
         </div>
-      \`;
+      `;
 
-      const getSocials = () => \`
+      const getSocials = () => `
         <div class="social-links-res">
-          \${data.link_github ? \`<a href="\${data.link_github}" target="_blank" class="social-item">\${socialIcons.github} GitHub \${externalLinkIcon}</a>\` : ''}
-          \${data.link_linkedin ? \`<a href="\${data.link_linkedin}" target="_blank" class="social-item">\${socialIcons.linkedin} LinkedIn \${externalLinkIcon}</a>\` : ''}
-          \${data.link_portfolio ? \`<a href="\${data.link_portfolio}" target="_blank" class="social-item">\${socialIcons.globe} Portfolio \${externalLinkIcon}</a>\` : ''}
-          \${data.link_certificates ? \`<a href="\${data.link_certificates}" target="_blank" class="social-item">\${socialIcons.award} Certificates \${externalLinkIcon}</a>\` : ''}
-          \${data.link_degree ? \`<a href="\${data.link_degree}" target="_blank" class="social-item">\${socialIcons.file} Degree/Marksheet \${externalLinkIcon}</a>\` : ''}
+          ${data.link_github ? `<a href="${data.link_github}" target="_blank" class="social-item">${socialIcons.github} GitHub ${externalLinkIcon}</a>` : ''}
+          ${data.link_linkedin ? `<a href="${data.link_linkedin}" target="_blank" class="social-item">${socialIcons.linkedin} LinkedIn ${externalLinkIcon}</a>` : ''}
+          ${data.link_portfolio ? `<a href="${data.link_portfolio}" target="_blank" class="social-item">${socialIcons.globe} Portfolio ${externalLinkIcon}</a>` : ''}
+          ${data.link_certificates ? `<a href="${data.link_certificates}" target="_blank" class="social-item">${socialIcons.award} Certificates ${externalLinkIcon}</a>` : ''}
+          ${data.link_degree ? `<a href="${data.link_degree}" target="_blank" class="social-item">${socialIcons.file} Degree/Marksheet ${externalLinkIcon}</a>` : ''}
         </div>
-      \`;
+      `;
 
-      const getContents = () => \`
-        \${data.summary ? \`
+      const getContents = () => `
+        ${data.summary ? `
           <div class="res-section">
             <div class="res-section-title">Profile</div>
-            <div class="res-text">\${data.summary}</div>
+            <div class="res-text">${data.summary}</div>
           </div>
-        \` : ''}
+        ` : ''}
         
-        \${data.education && data.education.length > 0 ? \`
+        ${data.education && data.education.length > 0 ? `
           <div class="res-section">
             <div class="res-section-title">Education</div>
-            \${data.education.map(edu => \`
+            ${data.education.map(edu => `
               <div class="res-item-row">
                 <div style="display: flex; justify-content: space-between;">
-                  <div class="res-bold">\${edu.degree}</div>
-                  <div class="res-date">\${edu.start_year || ''} - \${edu.end_year || ''}</div>
+                  <div class="res-bold">${edu.degree}</div>
+                  <div class="res-date">${edu.start_year || ''} - ${edu.end_year || ''}</div>
                 </div>
-                <div class="res-text" style="font-style: italic; opacity: 0.8;">\${edu.college} \${edu.location ? \`, \${edu.location}\` : ''}</div>
-                \${edu.cgpa || edu.marksheet_link ? \`
+                <div class="res-text" style="font-style: italic; opacity: 0.8;">${edu.college} ${edu.location ? `, ${edu.location}` : ''}</div>
+                ${edu.cgpa || edu.marksheet_link ? `
                   <div class="edu-score-row">
-                    \${edu.cgpa ? \`<div class="res-text" style="font-size: 11px; font-weight: 600; color: var(--res-primary);">CGPA / Percentage: \${edu.cgpa}</div>\` : ''}
-                    \${edu.marksheet_link ? \`<a href="\${edu.marksheet_link}" target="_blank" class="edu-doc-link" title="Marksheet soft copy">\${socialIcons.file}</a>\` : ''}
+                    ${edu.cgpa ? `<div class="res-text" style="font-size: 11px; font-weight: 600; color: var(--res-primary);">CGPA / Percentage: ${edu.cgpa}</div>` : ''}
+                    ${edu.marksheet_link ? `<a href="${edu.marksheet_link}" target="_blank" class="edu-doc-link" title="Marksheet soft copy">${socialIcons.file}</a>` : ''}
                   </div>
-                \` : ''}
-                \${edu.desc ? \`<div class="res-text" style="font-size: 11px; opacity: 0.7;">\${edu.desc}</div>\` : ''}
+                ` : ''}
+                ${edu.desc ? `<div class="res-text" style="font-size: 11px; opacity: 0.7;">${edu.desc}</div>` : ''}
               </div>
-            \`).join('')}
+            `).join('')}
           </div>
-        \` : ''}
+        ` : ''}
 
-        \${data.experience && data.experience.length > 0 ? \`
+        ${data.experience && data.experience.length > 0 ? `
           <div class="res-section">
             <div class="res-section-title">Experience</div>
-            \${data.experience.map(exp => \`
+            ${data.experience.map(exp => `
               <div class="res-item-row">
                 <div style="display: flex; justify-content: space-between;">
-                  <div class="res-bold">\${exp.title}</div>
-                  <div class="res-date">\${exp.duration}</div>
+                  <div class="res-bold">${exp.title}</div>
+                  <div class="res-date">${exp.duration}</div>
                 </div>
-                <div class="res-text" style="font-style: italic; opacity: 0.8;">\${exp.company} \${exp.location ? \`, \${exp.location}\` : ''}</div>
-                <div class="res-text" style="font-size: 11px; opacity: 0.7; margin-top: 4px;">\${exp.desc || ''}</div>
+                <div class="res-text" style="font-style: italic; opacity: 0.8;">${exp.company} ${exp.location ? `, ${exp.location}` : ''}</div>
+                <div class="res-text" style="font-size: 11px; opacity: 0.7; margin-top: 4px;">${exp.desc || ''}</div>
               </div>
-            \`).join('')}
+            `).join('')}
           </div>
-        \` : ''}
+        ` : ''}
 
-        \${data.projects_list && data.projects_list.length > 0 ? \`
+        ${data.projects_list && data.projects_list.length > 0 ? `
           <div class="res-section">
             <div class="res-section-title">Projects</div>
-            \${data.projects_list.map(proj => \`
+            ${data.projects_list.map(proj => `
               <div class="res-item-row">
-                <div class="res-bold">\${proj.name}</div>
-                <div class="res-text" style="font-size: 11px; font-weight: 500; color: var(--res-primary);">Tech: \${proj.tech || ''}</div>
+                <div class="res-bold">${proj.name}</div>
+                <div class="res-text" style="font-size: 11px; font-weight: 500; color: var(--res-primary);">Tech: ${proj.tech || ''}</div>
                 <div style="display: flex; gap: 10px; margin: 4px 0;">
-                   \${proj.github ? \`<a href="\${proj.github}" target="_blank" style="font-size: 10px; color: #666; text-decoration: underline; display: inline-flex; align-items: center; gap: 3px;">GitHub \${externalLinkIcon}</a>\` : ''}
-                   \${proj.live ? \`<a href="\${proj.live}" target="_blank" style="font-size: 10px; color: #666; text-decoration: underline;">Live Demo</a>\` : ''}
+                   ${proj.github ? `<a href="${proj.github}" target="_blank" style="font-size: 10px; color: #666; text-decoration: underline; display: inline-flex; align-items: center; gap: 3px;">GitHub ${externalLinkIcon}</a>` : ''}
+                   ${proj.live ? `<a href="${proj.live}" target="_blank" style="font-size: 10px; color: #666; text-decoration: underline;">Live Demo</a>` : ''}
                 </div>
-                <div class="res-text" style="font-size: 11px; opacity: 0.7;">\${proj.desc || ''}</div>
+                <div class="res-text" style="font-size: 11px; opacity: 0.7;">${proj.desc || ''}</div>
               </div>
-            \`).join('')}
+            `).join('')}
           </div>
-        \` : ''}
+        ` : ''}
 
-        \${data.skills || data.skills_description ? \`
+        ${data.skills || data.skills_description ? `
           <div class="res-section">
             <div class="res-section-title">Skills</div>
-            \${data.skills_description ? \`<div class="res-text" style="font-size: 11px; line-height: 1.45; opacity: 0.78; margin-bottom: 8px;">\${data.skills_description}</div>\` : ''}
-            \${data.skills ? \`
+            ${data.skills_description ? `<div class="res-text" style="font-size: 11px; line-height: 1.45; opacity: 0.78; margin-bottom: 8px;">${data.skills_description}</div>` : ''}
+            ${data.skills ? `
               <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                \${data.skills.split(',').filter(s => s.trim()).map(s => \`<span style="background: #f0f0f0; padding: 3px 10px; border-radius: 4px; font-size: 10px; color: #444;">\${s.trim()}</span>\`).join('')}
+                ${data.skills.split(',').filter(s => s.trim()).map(s => `<span style="background: #f0f0f0; padding: 3px 10px; border-radius: 4px; font-size: 10px; color: #444;">${s.trim()}</span>`).join('')}
               </div>
-            \` : ''}
+            ` : ''}
           </div>
-        \` : ''}
-      \`;
+        ` : ''}
+      `;
 
       // 3. Assemble Layout
       let html = '';
       if (layoutType === 'sidebar') {
-        html = \`
+        html = `
           <div class="layout-sidebar">
             <div class="res-column-side">
-              \${data.profile_pic ? \`<img src="\${data.profile_pic}" class="profile-img-res">\` : ''}
-              <div class="res-name-big" style="font-size: 24px;">\${data.full_name || 'Your Name'}</div>
+              ${data.profile_pic ? `<img src="${data.profile_pic}" class="profile-img-res">` : ''}
+              <div class="res-name-big" style="font-size: 24px;">${data.full_name || 'Your Name'}</div>
               <div style="margin-top: 20px;">
                 <div class="res-section-title" style="color: #fff; border-color: rgba(255,255,255,0.2); font-size: 11px;">Contact</div>
-                <div class="res-text" style="color: rgba(255,255,255,0.8); font-size: 11px;">\${data.email || ''}</div>
-                <div class="res-text" style="color: rgba(255,255,255,0.8); font-size: 11px;">\${data.contact_no || ''}</div>
-                <div class="res-text" style="color: rgba(255,255,255,0.8); font-size: 11px;">\${data.location || ''}</div>
+                <div class="res-text" style="color: rgba(255,255,255,0.8); font-size: 11px;">${data.email || ''}</div>
+                <div class="res-text" style="color: rgba(255,255,255,0.8); font-size: 11px;">${data.contact_no || ''}</div>
+                <div class="res-text" style="color: rgba(255,255,255,0.8); font-size: 11px;">${data.location || ''}</div>
               </div>
               <div style="margin-top: 30px;">
                 <div class="res-section-title" style="color: #fff; border-color: rgba(255,255,255,0.2); font-size: 11px;">Socials</div>
-                \${getSocials()}
+                ${getSocials()}
               </div>
             </div>
             <div class="res-column-main">
-              \${getContents()}
+              ${getContents()}
             </div>
           </div>
-        \`;
+        `;
       } else if (layoutType === 'split') {
-        html = \`
+        html = `
           <div class="layout-split">
              <div style="background: var(--res-primary); color: #fff; padding: 40px; text-align: center;">
-                <div class="res-name-big" style="color: #fff;">\${data.full_name || 'Your Name'}</div>
-                \${getContactInfo()}
+                <div class="res-name-big" style="color: #fff;">${data.full_name || 'Your Name'}</div>
+                ${getContactInfo()}
              </div>
              <div style="padding: 40px; flex-grow: 1; background: #fff;">
-                \${getContents()}
+                ${getContents()}
                 <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                  \${getSocials()}
+                  ${getSocials()}
                 </div>
              </div>
           </div>
-        \`;
+        `;
       } else {
         const isCentered = layoutType === 'centered' || templateType.includes('min');
-        html = \`
-          <div class="layout-standard \${isCentered ? 'layout-centered' : ''}">
-            <div style="margin-bottom: 30px; \${isCentered ? 'text-align: center;' : ''}">
-              <div class="res-name-big">\${data.full_name || 'Your Name'}</div>
-              \${getContactInfo()}
+        html = `
+          <div class="layout-standard ${isCentered ? 'layout-centered' : ''}">
+            <div style="margin-bottom: 30px; ${isCentered ? 'text-align: center;' : ''}">
+              <div class="res-name-big">${data.full_name || 'Your Name'}</div>
+              ${getContactInfo()}
               <div style="margin-top: 10px;">
-                \${getSocials()}
+                ${getSocials()}
               </div>
             </div>
-            \${getContents()}
+            ${getContents()}
           </div>
-        \`;
+        `;
       }
 
       resumeContainer.innerHTML = html;
@@ -476,7 +476,11 @@
 
       const resumeNaturalWidth = 794;
       const resumeNaturalHeight = 1122;
-      const availableWidth = container.offsetWidth - 80;
+      
+      // On mobile devices, shrink the horizontal padding drastically to maximize readability!
+      const isMobile = window.innerWidth <= 480;
+      const horizontalPadding = isMobile ? 24 : 80;
+      const availableWidth = container.offsetWidth - horizontalPadding;
 
       // Force scrollbar visibility to reassure user
       container.style.overflowY = 'scroll';
@@ -484,18 +488,18 @@
       if (availableWidth < resumeNaturalWidth) {
         const scale = availableWidth / resumeNaturalWidth;
         resume.style.transformOrigin = 'top left';
-        resume.style.transform = \`scale(\${scale})\`;
+        resume.style.transform = `scale(${scale})`;
         
         const leftPadding = (container.offsetWidth - (resumeNaturalWidth * scale)) / 2;
-        resume.style.marginLeft = \`\${Math.max(20, leftPadding)}px\`;
+        resume.style.marginLeft = `${Math.max(10, leftPadding)}px`;
         
         // Use a more reliable height matching for transform
         const scaledVisualHeight = resumeNaturalHeight * scale;
         resume.style.marginBottom = "0px"; // Reset
-        // We set the height of the container's content area manually if needed
-        // but actually setting margin-bottom on the resume is the standard way to 'shrink' the layout box
+        
         const heightReduction = resumeNaturalHeight - scaledVisualHeight;
-        resume.style.marginBottom = \`-\${heightReduction - 60}px\`; 
+        const bottomGap = isMobile ? 30 : 60;
+        resume.style.marginBottom = `-${heightReduction - bottomGap}px`; 
       } else {
         resume.style.transform = 'scale(1)';
         resume.style.transformOrigin = 'top center';
@@ -513,7 +517,7 @@
       const trimmed = (url || '').trim();
       if (!trimmed) return '';
       if (/^(https?:|mailto:|tel:)/i.test(trimmed)) return trimmed;
-      return \`https://\${trimmed}\`;
+      return `https://${trimmed}`;
     }
 
     function addSocialLinkAnnotations(pdf, element) {
@@ -578,7 +582,7 @@
 
         pdf.addImage(imageData, 'JPEG', 0, 0, 210, 297);
         addSocialLinkAnnotations(pdf, element);
-        pdf.save(\`\${data.full_name || 'resume'}.pdf\`);
+        pdf.save(`${data.full_name || 'resume'}.pdf`);
       } catch (err) {
         downloadFailed = true;
         console.error('PDF Export Error:', err);
