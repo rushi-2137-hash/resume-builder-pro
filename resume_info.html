@@ -8,357 +8,336 @@
   <!-- Google Font: Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Cropper.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+  <!-- Data Persistence -->
+  <script src="storage_manager.js"></script>
 </head>
-<body class="dashboard-body create-flow">
+<body class="dashboard-body">
 
-  <div class="app">
-    <div class="canvas">
-      <div class="device-frame">
-        
-        <!-- Fixed Header -->
-        <div class="resume-header">
-          <div class="header-left">
-            <i data-lucide="arrow-left" onclick="window.history.back()"></i>
-            <span class="header-title">Resume Info</span>
+  <div class="canvas">
+    <div class="device-frame">
+      <!-- Fixed Header -->
+      <div class="resume-header">
+        <div class="header-left">
+          <i data-lucide="arrow-left" onclick="window.location.href='home.html'"></i>
+          <span class="header-title">Resume Info</span>
+        </div>
+        <div class="header-right">
+          <i data-lucide="home" onclick="window.location.href='home.html'"></i>
+          <i data-lucide="gem" class="premium-icon"></i>
+        </div>
+      </div>
+
+      <!-- Scrollable Content Area -->
+      <div class="scrollable-content">
+        <!-- Desktop Steps Sidebar -->
+        <div class="desktop-steps-sidebar">
+          <div class="sidebar-brand">
+            <i data-lucide="zap" style="color: #482E87;"></i>
+            <span>ResumeBuilder</span>
           </div>
-          <div class="header-right">
-            <i data-lucide="crown" class="premium-icon"></i>
-            <i data-lucide="eye" class="preview-btn-icon" onclick="window.location.href='resume_preview.html?id=' + new URLSearchParams(window.location.search).get('id')"></i>
+          <div class="sidebar-step-list">
+            <div class="side-step-item active" onclick="Stepper.goTo(1)">
+              <div class="side-step-icon">1</div>
+              <span>Contact Details</span>
+            </div>
+            <div class="side-step-item" onclick="Stepper.goTo(2)">
+              <div class="side-step-icon">2</div>
+              <span>Social Links</span>
+            </div>
+            <div class="side-step-item" onclick="Stepper.goTo(3)">
+              <div class="side-step-icon">3</div>
+              <span>Education</span>
+            </div>
+            <div class="side-step-item" onclick="Stepper.goTo(4)">
+              <div class="side-step-icon">4</div>
+              <span>Experience</span>
+            </div>
+            <div class="side-step-item" onclick="Stepper.goTo(5)">
+              <div class="side-step-icon">5</div>
+              <span>Skills & Projects</span>
+            </div>
+            <div class="side-step-item" onclick="Stepper.goTo(6)">
+              <div class="side-step-icon">6</div>
+              <span>Summary</span>
+            </div>
           </div>
         </div>
 
-        <!-- Scrollable Content Area -->
-        <div class="scrollable-content">
-          <!-- Desktop Steps Sidebar -->
-          <div class="desktop-steps-sidebar">
-            <div class="sidebar-brand">
-              <i data-lucide="zap" style="color: #482E87;"></i>
-              <span>ResumeBuilder</span>
-            </div>
-            <div class="sidebar-step-list">
-              <div class="side-step-item active" onclick="Stepper.goTo(1)">
-                <div class="side-step-icon">1</div>
-                <span>Contact Details</span>
-              </div>
-              <div class="side-step-item" onclick="Stepper.goTo(2)">
-                <div class="side-step-icon">2</div>
-                <span>Social Links</span>
-              </div>
-              <div class="side-step-item" onclick="Stepper.goTo(3)">
-                <div class="side-step-icon">3</div>
-                <span>Education</span>
-              </div>
-              <div class="side-step-item" onclick="Stepper.goTo(4)">
-                <div class="side-step-icon">4</div>
-                <span>Experience</span>
-              </div>
-              <div class="side-step-item" onclick="Stepper.goTo(5)">
-                <div class="side-step-icon">5</div>
-                <span>Skills & Projects</span>
-              </div>
-              <div class="side-step-item" onclick="Stepper.goTo(6)">
-                <div class="side-step-icon">6</div>
-                <span>Summary</span>
+        <!-- Form Content -->
+        <div class="resume-form" id="resume-form-container">
+          
+          <!-- Professional Workspace Header / Profile Section -->
+          <div class="profile-pic-section" id="profile-heading-section" style="padding: 0 0 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-bottom: 1px solid #f0f0f0; margin-bottom: 30px;">
+            <div class="profile-pic-container" id="profile-pic-trigger" style="width: 100px; height: 100px;">
+              <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" id="profile-img-preview" alt="Profile" style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover;">
+              <div class="camera-badge">
+                <i data-lucide="camera"></i>
               </div>
             </div>
+            <input type="file" id="profile-input" style="display: none;" accept="image/*">
+            <p style="color: #888; font-size: 13px; margin-top: 12px;">Tap to upload professional photo</p>
           </div>
-
-          <!-- Form Content -->
-          <div class="resume-form" id="resume-form-container">
+          
+          <!-- Step 1: Personal Info -->
+          <div class="step-content active" id="step-1">
+            <h3 class="section-heading">Contact Details</h3>
+            <p class="section-subtext">Start with your basic information so employers can reach you.</p>
             
-            <!-- Professional Workspace Header / Profile Section -->
-            <div class="profile-pic-section" id="profile-heading-section" style="padding: 0 0 40px; display: flex; flex-direction: row; align-items: center; gap: 24px; border-bottom: 1px solid #f0f0f0; margin-bottom: 30px;">
-              <div class="profile-pic-container" id="profile-pic-trigger" style="width: 85px; height: 85px;">
-                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" id="profile-img-preview" alt="Profile">
-                <div class="camera-badge">
-                  <i data-lucide="camera"></i>
+            <div class="input-card">
+              <div class="input-group-labeled">
+                <label>Full Name</label>
+                <input type="text" id="full_name" placeholder="John Doe" class="underlined-input">
+              </div>
+              <div class="input-group-labeled">
+                <label>Phone Number</label>
+                <input type="text" id="contact_no" placeholder="+1 234 567 890" class="underlined-input">
+              </div>
+              <div class="input-group-labeled">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="john.doe@example.com" class="underlined-input">
+              </div>
+              <div class="input-group-labeled">
+                <label>City, Country (Optional)</label>
+                <input type="text" id="location" placeholder="e.g. London, UK" class="underlined-input">
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Social Links -->
+          <div class="step-content" id="step-2">
+            <h3 class="section-heading">Social Links</h3>
+            <p class="section-subtext">Add links to your professional profiles and portfolios.</p>
+            
+            <div class="input-card">
+              <div class="input-group-labeled">
+                <label>GitHub Profile</label>
+                <input type="url" id="link_github" placeholder="https://github.com/username" class="underlined-input">
+              </div>
+              <div class="input-group-labeled">
+                <label>LinkedIn Profile</label>
+                <input type="url" id="link_linkedin" placeholder="https://linkedin.com/in/username" class="underlined-input">
+              </div>
+              <div class="input-group-labeled">
+                <label>Portfolio / Website</label>
+                <input type="url" id="link_portfolio" placeholder="https://yourportfolio.com" class="underlined-input">
+              </div>
+              <div class="input-group-labeled">
+                <label>Certificates Link (Google Drive/Cloud)</label>
+                <input type="url" id="link_certificates" placeholder="https://drive.google.com/..." class="underlined-input">
+              </div>
+              <div class="input-group-labeled">
+                <label>Degree / Marksheet (Google Drive/Cloud)</label>
+                <input type="url" id="link_degree" placeholder="https://drive.google.com/..." class="underlined-input">
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Education -->
+          <div class="step-content" id="step-3">
+            <div class="section-header-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <h3 class="section-heading" style="margin-bottom: 0;">Education</h3>
+              <button class="small-add-btn" onclick="Stepper.addEducation()">+ Add Entry</button>
+            </div>
+            <p class="section-subtext">Add details about your degree and university.</p>
+            <div id="education-list">
+              <!-- Dynamic education cards will be added here -->
+            </div>
+          </div>
+
+          <!-- Step 4: Experience -->
+          <div class="step-content" id="step-4">
+            <div class="section-header-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <h3 class="section-heading" style="margin-bottom: 0;">Experience</h3>
+              <button class="small-add-btn" onclick="Stepper.addExperience()">+ Add Entry</button>
+            </div>
+            <p class="section-subtext">List your work history, starting from the most recent.</p>
+            <div id="experience-list">
+              <!-- Dynamic experience cards will be added here -->
+            </div>
+          </div>
+
+          <!-- Step 5: Skills & Projects -->
+          <div class="step-content" id="step-5">
+            <h3 class="section-heading">Skills & Projects</h3>
+            <p class="section-subtext">Highlight your key technical skills and best projects.</p>
+            
+            <div class="input-card skills-card premium-skills-card">
+              <div class="input-group-labeled compact-field">
+                <label>Professional Skills</label>
+                <p class="field-hint">Comma-separated skills.</p>
+                <div class="skill-input-shell">
+                  <i data-lucide="sparkles"></i>
+                  <input type="text" id="skills" placeholder="HTML, CSS, JavaScript, C++" class="skills-input">
                 </div>
               </div>
-              <input type="file" id="profile-input" style="display: none;" accept="image/*">
-              <div>
-                <h2 style="font-size: 24px; font-weight: 800; color: #1a1a1a; letter-spacing: -0.5px;">Resume details</h2>
-                <p style="color: #888; font-size: 14px; margin-top: 6px;">Tap the circle to upload a professional photo</p>
+              <div class="input-group-labeled">
+                <label>Brief Description</label>
+                <p class="field-hint">How you use these skills in projects or work.</p>
+                <div class="skill-description-shell">
+                  <textarea id="skills_description" placeholder="Built responsive interfaces, implemented interactive features, and wrote clean, maintainable frontend code." class="skill-description-textarea"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-header-row" style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0 20px;">
+              <h3 class="section-heading" style="margin-bottom: 0;">Key Projects</h3>
+              <button class="small-add-btn" onclick="Stepper.addProject()">+ Add Project</button>
+            </div>
+            <div id="projects-list">
+              <!-- Dynamic project cards will be added here -->
+            </div>
+          </div>
+
+          <!-- Step 6: Summary -->
+          <div class="step-content" id="step-6">
+            <h3 class="section-heading">Professional Summary</h3>
+            <p class="section-subtext">Briefly highlight your career goals and achievements.</p>
+            
+            <div class="input-card">
+              <div class="input-group-labeled">
+                <label>Your Summary</label>
+                <textarea id="summary" placeholder="Experienced Professional with a focus on..." class="underlined-textarea" style="height: 150px; padding: 12px; background: #f8f9fa; border-radius: 12px; border: 1px solid #eee;"></textarea>
               </div>
             </div>
             
-            <!-- Step 1: Personal Info -->
-            <div class="step-content active" id="step-1">
-              <h3 class="section-heading">Contact Details</h3>
-              <p class="section-subtext">Start with your basic information so employers can reach you.</p>
-              
-              <div class="input-card">
-                <div class="input-group-labeled">
-                  <label>Full Name</label>
-                  <input type="text" id="full_name" placeholder="John Doe" class="underlined-input">
-                </div>
-                <div class="input-group-labeled">
-                  <label>Job Title</label>
-                  <input type="text" id="job_title" placeholder="e.g. Senior Product Designer" class="underlined-input">
-                </div>
-                <div class="input-group-labeled">
-                  <label>Email Address</label>
-                  <input type="email" id="email" placeholder="johndoe@example.com" class="underlined-input">
-                </div>
-                <div class="input-group-labeled">
-                  <label>Phone Number</label>
-                  <input type="tel" id="mobile" placeholder="+1 (555) 000-0000" class="underlined-input">
-                </div>
-                <div class="input-group-labeled">
-                  <label>Location</label>
-                  <input type="text" id="location" placeholder="City, Country" class="underlined-input">
-                </div>
-                <div class="input-group-labeled" style="margin-bottom: 0;">
-                  <label>Date of Birth</label>
-                  <input type="text" id="dob" placeholder="DD/MM/YYYY" class="underlined-input" style="margin-bottom: 0;">
-                </div>
-              </div>
+            <div class="form-footer" style="padding: 40px 0;">
+              <button class="next-btn" onclick="Stepper.saveCurrentStep(); window.location.href='templates.html'" style="width: 100%; border-radius: 16px; height: 56px; font-size: 16px;">EXPLORE 30+ TEMPLATES</button>
             </div>
-
-            <!-- Step 2: Social Links -->
-            <div class="step-content" id="step-2">
-              <h3 class="section-heading">Digital Presence</h3>
-              <p class="section-subtext">Add links to your professional profiles and portfolios.</p>
-              
-              <div class="input-card">
-                <div class="input-group-labeled">
-                  <label>LinkedIn</label>
-                  <input type="url" id="link_linkedin" placeholder="https://linkedin.com/in/username" class="underlined-input">
-                </div>
-                <div class="input-group-labeled">
-                  <label>Portfolio / Website</label>
-                  <input type="url" id="link_portfolio" placeholder="https://yourwebsite.com" class="underlined-input">
-                </div>
-                <div class="input-group-labeled">
-                  <label>Certificates Link</label>
-                  <input type="url" id="link_certificates" placeholder="Drive or Credential link" class="underlined-input">
-                </div>
-                <div class="input-group-labeled" style="margin-bottom: 0;">
-                  <label>Degree / Transcripts Link</label>
-                  <input type="url" id="link_degree" placeholder="Drive or Credential link" class="underlined-input" style="margin-bottom: 0;">
-                </div>
-              </div>
-            </div>
-
-            <!-- Step 3: Education -->
-            <div class="step-content" id="step-3">
-              <h3 class="section-heading">Education History</h3>
-              <p class="section-subtext">List your degrees, schools, and academic achievements.</p>
-              
-              <div id="education-list">
-                <!-- Dynamically populated -->
-              </div>
-              <button class="small-add-btn" onclick="Stepper.addEducation()">
-                + Add Education
-              </button>
-            </div>
-
-            <!-- Step 4: Experience -->
-            <div class="step-content" id="step-4">
-              <h3 class="section-heading">Work Experience</h3>
-              <p class="section-subtext">Detail your past roles, responsibilities, and key accomplishments.</p>
-              
-              <div id="experience-list">
-                <!-- Dynamically populated -->
-              </div>
-              <button class="small-add-btn" onclick="Stepper.addExperience()">
-                + Add Experience
-              </button>
-            </div>
-
-            <!-- Step 5: Skills & Projects -->
-            <div class="step-content" id="step-5">
-              <h3 class="section-heading">Skills & Expertise</h3>
-              <p class="section-subtext">Highlight what makes you uniquely qualified.</p>
-              
-              <div class="input-card skills-card">
-                <div class="input-group-labeled compact-field">
-                  <label>Top Skills</label>
-                  <p class="field-hint">Comma separated (e.g. React, Node.js, UI/UX, Agile)</p>
-                  <textarea id="skills" placeholder="List your core technical and soft skills..." class="skills-textarea"></textarea>
-                </div>
-                <div class="input-group-labeled">
-                  <label>Skill Summary & Strengths</label>
-                  <p class="field-hint">A brief overview of your proficiency and unique value.</p>
-                  <textarea id="skills_description" placeholder="Proven ability to architect scalable frontend systems and lead cross-functional design teams..." class="skill-description-textarea"></textarea>
-                </div>
-              </div>
-
-              <h3 class="section-heading" style="margin-top: 10px;">Projects</h3>
-              <p class="section-subtext">Showcase your best work and personal endeavors.</p>
-              <div id="projects-list">
-                <!-- Dynamically populated -->
-              </div>
-              <button class="small-add-btn" onclick="Stepper.addProject()">
-                + Add Project
-              </button>
-            </div>
-
-            <!-- Step 6: Summary -->
-            <div class="step-content" id="step-6">
-              <h3 class="section-heading">Professional Summary</h3>
-              <p class="section-subtext">Write a compelling overview of your career and goals.</p>
-              
-              <div class="input-card">
-                <div class="input-group-labeled" style="margin-bottom: 0;">
-                  <label>Summary Statement</label>
-                  <textarea id="summary" placeholder="Dedicated and results-driven professional with over 5 years of experience in..." class="underlined-textarea" style="height: 120px; margin-bottom: 0; padding-top: 12px;"></textarea>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
+      </div>
 
-        <!-- Step Actions & Navigation -->
-        <div class="step-actions">
-          <button class="back-btn hidden" id="btn-back" onclick="Stepper.prev()">Back</button>
-          <div style="flex: 1;"></div>
-          <button class="next-btn-main" id="btn-next" onclick="Stepper.next()">Next</button>
+      <!-- Step Actions & Navigation -->
+      <div class="step-actions">
+        <button class="back-btn hidden" id="prev-step-btn" onclick="Stepper.prev()">
+          <i data-lucide="chevron-left"></i> Back
+        </button>
+        <div class="step-indicator">
+          <span id="step-number">Step 1</span> <span style="opacity: 0.5;">of 6</span>
         </div>
+        <button class="next-btn-main" id="next-step-btn" onclick="Stepper.next()">
+          Next <i data-lucide="chevron-right"></i>
+        </button>
+      </div>
 
+      <!-- Bottom Navigation -->
+      <div class="bottom-navigation resume-bottom-nav">
+        <div class="nav-item active" onclick="Stepper.saveCurrentStep(); window.location.href='home.html'">
+          <i data-lucide="home"></i>
+          <span>Home</span>
+          <div class="active-line"></div>
+        </div>
+        <div class="nav-item" onclick="Stepper.saveCurrentStep(); window.location.href='templates.html'">
+          <i data-lucide="file-text"></i>
+          <span>Templates</span>
+        </div>
+        <div class="nav-item" onclick="Stepper.saveCurrentStep(); window.location.href='home.html'">
+          <i data-lucide="user"></i>
+          <span>Profile</span>
+        </div>
       </div>
     </div>
   </div>
 
-  <script src="storage_manager.js"></script>
-  <script src="cropper_manager.js"></script>
+  <!-- Cropper Modal -->
+  <div id="cropper-modal" class="modal">
+    <div class="modal-content">
+      <div class="cropper-container">
+        <img id="cropper-image" src="" alt="To Crop">
+      </div>
+      <div class="modal-actions">
+        <button id="cancel-crop" class="btn-secondary">Cancel</button>
+        <button id="apply-crop" class="btn-primary">Crop & Save</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Initialize standard lucide icons
+    const pageParams = new URLSearchParams(window.location.search);
+    const resumeFlow = pageParams.get('flow') || sessionStorage.getItem('resume_builder_flow');
+    const isFocusedFormFlow = resumeFlow === 'create' || resumeFlow === 'edit';
+
+    if (isFocusedFormFlow) {
+      document.body.classList.add('create-flow');
+    }
+
     lucide.createIcons();
-    
-    // --- Initial Cropper Setup ---
-    document.addEventListener('DOMContentLoaded', () => {
-        const trigger = document.getElementById('profile-pic-trigger');
-        const fileInput = document.getElementById('profile-input');
-        
-        trigger.addEventListener('click', () => {
-            fileInput.click();
-        });
 
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files && e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    // Automatically save the uncropped image as the profile picture right away,
-                    // or trigger a future modal if cropper is added back. For now, immediate preview:
-                    const imgPreview = document.getElementById('profile-img-preview');
-                    imgPreview.src = event.target.result;
-                    
-                    // Save dynamically
-                    const currentId = new URLSearchParams(window.location.search).get('id');
-                    if(currentId) {
-                        const data = StorageManager.getResume(currentId) || {};
-                        data.profile_image = event.target.result;
-                        StorageManager.saveResume(currentId, data);
-                    }
-                };
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        });
-    });
+    const profileInput = document.getElementById('profile-input');
+    const profileImgPreview = document.getElementById('profile-img-preview');
+    const profileTrigger = document.getElementById('profile-pic-trigger');
+    const cropModal = document.getElementById('cropper-modal');
+    const cropperImage = document.getElementById('cropper-image');
+    let cropper;
 
+    profileTrigger.onclick = () => profileInput.click();
+
+    profileInput.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          cropperImage.src = event.target.result;
+          cropModal.style.display = 'flex';
+          if (cropper) cropper.destroy();
+          cropper = new Cropper(cropperImage, {
+            aspectRatio: 1,
+            viewMode: 1,
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    document.getElementById('cancel-crop').onclick = () => {
+      cropModal.style.display = 'none';
+      profileInput.value = '';
+    };
+
+    document.getElementById('apply-crop').onclick = () => {
+      const canvas = cropper.getCroppedCanvas({ width: 200, height: 200 });
+      const dataUrl = canvas.toDataURL();
+      profileImgPreview.src = dataUrl;
+      StorageManager.saveResume(StorageManager.getActiveId(), { profile_pic: dataUrl });
+      cropModal.style.display = 'none';
+    };
+
+    // --- Stepper Logic ---
     const Stepper = {
       currentStep: 1,
       totalSteps: 6,
-
+      
       init: () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const resumeId = urlParams.get('id');
+        const activeId = StorageManager.getActiveId();
+        const data = StorageManager.getResume(activeId) || {};
         
-        if (resumeId) {
-          Stepper.loadData(resumeId);
-        } else {
-          // If no ID, generate one and start fresh
-          const newId = 'resume_' + Date.now();
-          window.history.replaceState({}, '', `?flow=create&id=${newId}`);
-          Stepper.addEducation();
-          Stepper.addExperience();
-          Stepper.addProject();
-        }
-        
+        // Load simple fields
+        ['full_name', 'contact_no', 'email', 'location', 'summary', 'skills', 'skills_description',
+         'link_github', 'link_linkedin', 'link_portfolio', 'link_certificates', 'link_degree'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && data[id]) el.value = data[id];
+        });
+
+        if (data.profile_pic) profileImgPreview.src = data.profile_pic;
+
+        // Load dynamic lists
+        if (data.education) data.education.forEach(edu => Stepper.addEducation(edu));
+        else Stepper.addEducation(); // Add one empty by default
+
+        if (data.experience) data.experience.forEach(exp => Stepper.addExperience(exp));
+        else Stepper.addExperience(); // Add one empty by default
+
+        if (data.projects_list) data.projects_list.forEach(proj => Stepper.addProject(proj));
+        else Stepper.addProject(); // Add one empty by default
+
         Stepper.updateUI();
-      },
-
-      loadData: (id) => {
-        const data = StorageManager.getResume(id) || {};
-        
-        // Profile Image
-        if (data.profile_image) {
-          document.getElementById('profile-img-preview').src = data.profile_image;
-        }
-
-        // Basics
-        document.getElementById('full_name').value = data.full_name || '';
-        document.getElementById('job_title').value = data.job_title || '';
-        document.getElementById('email').value = data.email || '';
-        document.getElementById('mobile').value = data.mobile || '';
-        document.getElementById('location').value = data.location || '';
-        document.getElementById('dob').value = data.dob || '';
-
-        // Socials
-        document.getElementById('link_linkedin').value = data.link_linkedin || '';
-        document.getElementById('link_portfolio').value = data.link_portfolio || '';
-        document.getElementById('link_certificates').value = data.link_certificates || '';
-        document.getElementById('link_degree').value = data.link_degree || '';
-
-        // Education
-        const eduList = data.education || [];
-        if (eduList.length > 0) {
-          eduList.forEach(edu => Stepper.addEducation(edu));
-        } else {
-          Stepper.addEducation();
-        }
-
-        // Experience
-        const expList = data.experience || [];
-        if (expList.length > 0) {
-          expList.forEach(exp => Stepper.addExperience(exp));
-        } else {
-          Stepper.addExperience();
-        }
-
-        // Skills & Projects
-        document.getElementById('skills').value = data.skills || '';
-        document.getElementById('skills_description').value = data.skills_description || '';
-
-        const projList = data.projects_list || [];
-        if (projList.length > 0) {
-          projList.forEach(proj => Stepper.addProject(proj));
-        } else {
-          Stepper.addProject();
-        }
-
-        // Summary
-        document.getElementById('summary').value = data.summary || '';
-      },
-
-      goTo: (stepNum) => {
-        Stepper.saveCurrentStep();
-        Stepper.currentStep = stepNum;
-        Stepper.updateUI();
-      },
-
-      next: () => {
-        Stepper.saveCurrentStep();
-        if (Stepper.currentStep < Stepper.totalSteps) {
-          Stepper.currentStep++;
-          Stepper.updateUI();
-        } else {
-          // Finish
-          const currentId = new URLSearchParams(window.location.search).get('id');
-          window.location.href = `templates.html?id=${currentId}`;
-        }
-      },
-
-      prev: () => {
-        Stepper.saveCurrentStep();
-        if (Stepper.currentStep > 1) {
-          Stepper.currentStep--;
-          Stepper.updateUI();
-        }
+        StorageManager.initAutoSave('resume-form-container');
       },
 
       updateUI: () => {
@@ -367,53 +346,63 @@
           s.classList.toggle('active', i + 1 === Stepper.currentStep);
         });
 
-        // Toggle sidebar active dots
+        // Update Desktop Sidebar items
         document.querySelectorAll('.side-step-item').forEach((item, i) => {
           item.classList.toggle('active', i + 1 === Stepper.currentStep);
         });
 
-        // Buttons
-        const backBtn = document.getElementById('btn-back');
-        const nextBtn = document.getElementById('btn-next');
+        // Update Step Indicator
+        document.getElementById('step-number').innerText = `Step ${Stepper.currentStep}`;
 
-        if (Stepper.currentStep === 1) {
-          backBtn.classList.add('hidden');
-        } else {
-          backBtn.classList.remove('hidden');
-        }
-
+        // Toggle buttons
+        document.getElementById('prev-step-btn').classList.toggle('hidden', Stepper.currentStep === 1);
+        const nextBtn = document.getElementById('next-step-btn');
         if (Stepper.currentStep === Stepper.totalSteps) {
-          nextBtn.textContent = 'Finish & Select Template';
-          nextBtn.style.background = '#0A214D'; // Navy emphasis for final step
+          nextBtn.classList.add('hidden');
         } else {
-          nextBtn.textContent = 'Next';
-          nextBtn.style.background = '#482E87'; // Default purple
+          nextBtn.classList.remove('hidden');
+          nextBtn.innerHTML = 'Next <i data-lucide="chevron-right"></i>';
+          lucide.createIcons();
         }
 
-        // Scroll top smoothly
-        document.getElementById('resume-form-container').scrollTo({ top: 0, behavior: 'smooth' });
+        // Scroll to top of the current form area when changing steps
+        const scrollableArea = document.querySelector('.scrollable-content');
+        if (scrollableArea) scrollableArea.scrollTop = 0;
+      },
+
+      next: () => {
+        if (Stepper.currentStep < Stepper.totalSteps) {
+          Stepper.saveCurrentStep();
+          Stepper.currentStep++;
+          Stepper.updateUI();
+        }
+      },
+
+      prev: () => {
+        if (Stepper.currentStep > 1) {
+          Stepper.saveCurrentStep();
+          Stepper.currentStep--;
+          Stepper.updateUI();
+        }
+      },
+
+      goTo: (step) => {
+        Stepper.saveCurrentStep();
+        Stepper.currentStep = step;
+        Stepper.updateUI();
       },
 
       saveCurrentStep: () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const activeId = urlParams.get('id');
-        if (!activeId) return;
-
-        const update = StorageManager.getResume(activeId) || { id: activeId, created_at: new Date().toISOString() };
+        const activeId = StorageManager.getActiveId();
+        const update = {};
 
         if (Stepper.currentStep === 1) {
           update.full_name = document.getElementById('full_name').value;
-          update.job_title = document.getElementById('job_title').value;
+          update.contact_no = document.getElementById('contact_no').value;
           update.email = document.getElementById('email').value;
-          update.mobile = document.getElementById('mobile').value;
           update.location = document.getElementById('location').value;
-          update.dob = document.getElementById('dob').value;
-          // Store preview image source
-          const previewImg = document.getElementById('profile-img-preview').src;
-          if (!previewImg.includes('cdn-icons-png')) {
-             update.profile_image = previewImg;
-          }
         } else if (Stepper.currentStep === 2) {
+          update.link_github = document.getElementById('link_github').value;
           update.link_linkedin = document.getElementById('link_linkedin').value;
           update.link_portfolio = document.getElementById('link_portfolio').value;
           update.link_certificates = document.getElementById('link_certificates').value;
