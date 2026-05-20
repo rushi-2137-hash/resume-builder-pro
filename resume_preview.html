@@ -68,8 +68,7 @@
       font-weight: 600;
       cursor: pointer;
       display: flex;
-      align-items: center;
-      gap: 8px;
+      align-items: center; gap: 8px;
     }
 
     .btn-download { background: #482E87; color: white; }
@@ -186,96 +185,3 @@
               `).join('')}
             </div>
           ` : ''}
-
-          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px;">
-            <div>
-               ${data.projects_list && data.projects_list.length > 0 ? `
-                <div class="res-section">
-                  <h2 class="res-section-title">Major Projects</h2>
-                  ${data.projects_list.map(proj => `
-                    <div style="margin-bottom:10px;">
-                      <div style="font-weight:600; font-size:13px;">${proj.name}</div>
-                      <div style="font-size:11px; color:#482E87; margin-bottom:2px;">${proj.tech}</div>
-                      <p style="font-size:12px; color:#555;">${proj.desc}</p>
-                    </div>
-                  `).join('')}
-                </div>
-              ` : ''}
-            </div>
-            <div>
-              ${data.skills ? `
-                <div class="res-section">
-                  <h2 class="res-section-title">Key Skills</h2>
-                  <div style="display:flex; flex-wrap:wrap; gap:5px;">
-                    ${data.skills.split(',').map(s => `<span style="background:#f0f0f5; padding:4px 10px; border-radius:4px; font-size:12px;">${s.trim()}</span>`).join('')}
-                  </div>
-                </div>
-              ` : ''}
-
-              ${data.education && data.education.length > 0 ? `
-                <div class="res-section">
-                  <h2 class="res-section-title">Education</h2>
-                  ${data.education.map(edu => `
-                    <div style="margin-bottom:10px;">
-                      <div style="font-weight:600; font-size:13px;">${edu.degree}</div>
-                      <div style="font-size:12px; color:#666;">${edu.college}</div>
-                      <div style="font-size:11px; color:#888;">${edu.start_year} - ${edu.end_year} | ${edu.cgpa}</div>
-                    </div>
-                  `).join('')}
-                </div>
-              ` : ''}
-            </div>
-          </div>
-        </div>
-
-        ${data.profile_pic ? `
-           <img src="${data.profile_pic}" style="position:absolute; top:40px; right:40px; width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid #f0f0f0;">
-        ` : ''}
-      `;
-      
-      lucide.createIcons();
-    }
-
-    async function downloadPDF() {
-      const element = document.getElementById('resume-a4-page');
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false
-      });
-      
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('my-resume.pdf');
-    }
-
-    async function shareResume() {
-        const activeId = StorageManager.getActiveId();
-        const data = StorageManager.getResume(activeId);
-        const shareData = {
-            title: 'My Professional Resume',
-            text: `Check out my resume created with Resume Builder Pro!`,
-            url: window.location.href
-        };
-
-        try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                await navigator.clipboard.writeText(window.location.href);
-                alert('Link copied to clipboard!');
-            }
-        } catch (err) {
-            console.error('Error sharing:', err);
-        }
-    }
-
-    window.onload = loadResume;
-  </script>
-</body>
-</html>
